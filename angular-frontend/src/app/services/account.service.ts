@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class AccountService {
 
-  private apiUrl = 'http://localhost:5000/api/accounts'; 
+  private apiUrl = 'https://salesforce-crud-app-eejj.onrender.com/api/accounts'; 
  
   constructor(private http: HttpClient) {} 
  
