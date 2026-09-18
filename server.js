@@ -13,9 +13,24 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+app.use(express.json());
+
+app.set("trust proxy", 1);
 
 app.use(
   session({
+    secret: process.env.SESSION_SECRET || "temporary-secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: true,
+      httpOnly: true,
+      sameSite: "none",
+    },
+  })
+);
+app.use(
+  session({ 
     secret: process.env.SESSION_SECRET || "temporary-secret",
     resave: false,
     saveUninitialized: false,
