@@ -9,13 +9,13 @@ const app = express();
 
 const PORT = process.env.PORT || 5000;
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://localhost:4200",
+  origin: [
+    "http://localhost:4200",
+    "https://salesforce-crud-app-sepia.vercel.app"
+  ],
   credentials: true
 }));
 app.use(express.json());
-app.use(express.json());
-
-app.set("trust proxy", 1);
 
 app.use(
   session({
@@ -27,13 +27,6 @@ app.use(
       httpOnly: true,
       sameSite: "none",
     },
-  })
-);
-app.use(
-  session({ 
-    secret: process.env.SESSION_SECRET || "temporary-secret",
-    resave: false,
-    saveUninitialized: false,
   })
 );
 

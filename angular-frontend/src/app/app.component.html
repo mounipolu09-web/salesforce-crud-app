@@ -1,53 +1,36 @@
-<h1>Salesforce Accounts</h1>
+<h1>Salesforce CRUD Application</h1>
 
-<h2>Create New Account</h2>
+<!-- Salesforce Object Dropdown -->
+<label for="objectSelect">Select Object:</label>
 
-<form (ngSubmit)="createAccount()">
-
-  <label>Account Name:</label>
-  <input
-    type="text"
-    [(ngModel)]="newAccount.Name"
-    name="Name"
-    required
-  />
-
-  <br><br>
-
-  <label>Industry:</label>
-  <input
-    type="text"
-    [(ngModel)]="newAccount.Industry"
-    name="Industry"
-  />
-
-  <br><br>
-
-  <label>Phone:</label>
-  <input
-    type="text"
-    [(ngModel)]="newAccount.Phone"
-    name="Phone"
-  />
-
-  <br><br>
-
-  <button type="submit">Create Account</button>
-
-</form>
+<select
+  id="objectSelect"
+  [(ngModel)]="selectedObject"
+  (change)="onObjectChange()"
+  name="selectedObject"
+>
+  <option
+    *ngFor="let object of salesforceObjects"
+    [value]="object"
+  >
+    {{ object }}
+  </option>
+</select>
 
 <hr>
-<div *ngIf="editingAccount">
 
-  <h2>Edit Account</h2>
+<!-- Account Section -->
+<div *ngIf="selectedObject === 'Account'">
 
-  <form (ngSubmit)="updateAccount()">
+  <h2>Create New Account</h2>
+
+  <form (ngSubmit)="createAccount()">
 
     <label>Account Name:</label>
     <input
       type="text"
-      [(ngModel)]="editingAccount.Name"
-      name="editName"
+      [(ngModel)]="newAccount.Name"
+      name="Name"
       required
     />
 
@@ -56,8 +39,8 @@
     <label>Industry:</label>
     <input
       type="text"
-      [(ngModel)]="editingAccount.Industry"
-      name="editIndustry"
+      [(ngModel)]="newAccount.Industry"
+      name="Industry"
     />
 
     <br><br>
@@ -65,48 +48,121 @@
     <label>Phone:</label>
     <input
       type="text"
-      [(ngModel)]="editingAccount.Phone"
-      name="editPhone"
+      [(ngModel)]="newAccount.Phone"
+      name="Phone"
     />
 
     <br><br>
 
-    <button type="submit">Update Account</button>
-
-    <button type="button" (click)="cancelEdit()">
-      Cancel
-    </button>
+    <button type="submit">Create Account</button>
 
   </form>
 
   <hr>
 
+  <!-- Edit Account -->
+  <div *ngIf="editingAccount">
+
+    <h2>Edit Account</h2>
+
+    <form (ngSubmit)="updateAccount()">
+
+      <label>Account Name:</label>
+      <input
+        type="text"
+        [(ngModel)]="editingAccount.Name"
+        name="editName"
+        required
+      />
+
+      <br><br>
+
+      <label>Industry:</label>
+      <input
+        type="text"
+        [(ngModel)]="editingAccount.Industry"
+        name="editIndustry"
+      />
+
+      <br><br>
+
+      <label>Phone:</label>
+      <input
+        type="text"
+        [(ngModel)]="editingAccount.Phone"
+        name="editPhone"
+      />
+
+      <br><br>
+
+      <button type="submit">Update Account</button>
+
+      <button
+        type="button"
+        (click)="cancelEdit()"
+      >
+        Cancel
+      </button>
+
+    </form>
+
+    <hr>
+
+  </div>
+
+  <!-- Account List -->
+  <h2>Account List</h2>
+
+  <table border="1" cellpadding="10">
+
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Industry</th>
+        <th>Phone</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      <tr *ngFor="let account of accounts">
+
+        <td>{{ account.Name }}</td>
+        <td>{{ account.Industry }}</td>
+        <td>{{ account.Phone }}</td>
+
+        <td>
+
+          <button
+            (click)="editAccount(account)"
+          >
+            Edit
+          </button>
+
+          <button
+            (click)="deleteAccount(account.Id)"
+          >
+            Delete
+          </button>
+
+        </td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
 </div>
-<h2>Account List</h2>
 
-<table border="1" cellpadding="10">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Industry</th>
-      <th>Phone</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
+<!-- Other Salesforce Objects -->
+<div *ngIf="selectedObject !== 'Account'">
 
-  <tbody>
-    <tr *ngFor="let account of accounts">
-      <td>{{ account.Name }}</td>
-      <td>{{ account.Industry }}</td>
-      <td>{{ account.Phone }}</td>
-      <td>
-        <button (click)="editAccount(account)">
-  Edit
-</button>
-        <button (click)="deleteAccount(account.Id)">
-          Delete
-        </button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+  <h2>{{ selectedObject }}</h2>
+
+  <p>
+    CRUD operations for {{ selectedObject }} will be added soon.
+  </p>
+
+</div>

@@ -7,7 +7,15 @@ import { AccountService } from './services/account.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
+selectedObject: string = 'Account';
 
+salesforceObjects: string[] = [
+  'Account',
+  'Opportunity',
+  'Lead',
+  'Contact',
+  'Case'
+];
   accounts: any[] = [];
 
   newAccount = {
@@ -19,19 +27,29 @@ editingAccount: any = null;
   constructor(private accountService: AccountService) {}
 
   ngOnInit(): void {
-    this.loadAccounts();
-  }
+  this.loadAccounts();
+}
 
-  loadAccounts(): void {
-    this.accountService.getAccounts().subscribe({
-      next: (data) => {
-        this.accounts = data;
-      },
-      error: (error) => {
-        console.error('Error loading accounts:', error);
-      }
-    });
+onObjectChange(): void {
+  console.log('Selected object:', this.selectedObject);
+
+  if (this.selectedObject === 'Account') {
+    this.loadAccounts();
+  } else {
+    this.accounts = [];
   }
+}
+
+loadAccounts(): void {
+  this.accountService.getAccounts().subscribe({
+    next: (data) => {
+      this.accounts = data;
+    },
+    error: (error) => {
+      console.error('Error loading accounts:', error);
+    }
+  });
+}
 editAccount(account: any): void {
   this.editingAccount = { ...account };
 }
