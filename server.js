@@ -225,70 +225,67 @@ app.get("/api/accounts", async (req, res) => {
   });
 // Salesforce OAuth Callback
 app.get("/auth/callback", async (req, res) => {
-const { code, state } = req.query;
+  const { code, state } = req.query;
 
-if (!code || !state) {
-  return res.status(400).send("Authorization code or state missing");
-}
-
-let codeVerifier;
-
-try {
-  const decodedState = JSON.parse(
-    Buffer.from(state, "base64url").toString()
-  );
-
-  codeVerifier = decodedState.codeVerifier;
-} catch (error) {
-  return res.status(400).send("Invalid OAuth state");
-}
-
-if (!codeVerifier) {
-  return res.status(400).send("OAuth code verifier missing");
-}if (!req.session.codeVerifier) {
-  console.error("OAuth session or code verifier is missing");
-  return res.status(400).send("OAuth session expired. Please try again.");
-}  
-    if (!code) {
-      return res.status(400).send("Authorization code missing");
-    }
-  
-    try {
-      const response = await axios.post(
-        `${process.env.SF_LOGIN_URL}/services/oauth2/token`,
-        new URLSearchParams({
-          grant_type: "authorization_code",
-          client_id: process.env.SF_CLIENT_ID,
-          client_secret: process.env.SF_CLIENT_SECRET,
-          redirect_uri: process.env.SF_REDIRECT_URI,
-          code: code,
-code_verifier: codeVerifier,        }).toString(),
-        {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        }
-      );
-  
-     req.session.accessToken = response.data.access_token;
-req.session.instanceUrl = response.data.instance_url;
-
-req.session.save((err) => {
-  if (err) {
-    console.error("Session Save Error:", err);
-    return res.status(500).send("Session save failed");
+  if (!code || !state) {
+    return res.status(400).send("Authorization code or state missing");
   }
 
-  res.send("Salesforce Login Successful! 🎉");
+  let codeVerifier;
+
+  try {
+    const decodedState = JSON.parse(
+      Buffer.from(state, "base64url").toString()
+    );
+
+    codeVerifier = decodedState.codeVerifier;
+  } catch (error) {
+    return res.status(400).send("Invalid OAuth state");
+  }
+
+  if (!codeVerifier) {
+    return res.status(400).send("OAuth code verifier missing");
+  }
+
+  try {
+    const response = await axios.post(
+      `${process.env.SF_LOGIN_URL}/services/oauth2/token`,
+      new URLSearchParams({
+        grant_type: "authorization_code",
+        client_id: process.env.SF_CLIENT_ID,
+        client_secret: process.env.SF_CLIENT_SECRET,
+        redirect_uri: process.env.SF_REDIRECT_URI,
+        code: code,
+        code_verifier: codeVerifier
+      }).toString(),
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        }
+      }
+    );
+
+    req.session.accessToken = response.data.access_token;
+    req.session.instanceUrl = response.data.instance_url;
+
+    req.session.save((err) => {
+      if (err) {
+        console.error("Session Save Error:", err);
+        return res.status(500).send("Session save failed");
+      }
+
+      res.send("Salesforce Login Successful! 🎉");
+    });
+
+  } catch (error) {
+    console.error(
+      "Salesforce OAuth Error:",
+      error.response?.data || error.message
+    );
+
+    res.status(500).send("Salesforce Login Failed");
+  }
 });
-    } catch (error) {
-      console.error(
-        error.response?.data || error.message
-      );
-  
-      res.status(500).send("Salesforce Login Failed");
-    }
-  });
 // Home
 app.get("/", (req, res) => {
   res.send("Salesforce CRUD Backend is Running!");
