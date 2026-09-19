@@ -298,7 +298,163 @@ app.delete("/api/accounts/:id", async (req, res) => {
     });
   }
 });
+// ==========================================
+// Opportunity CRUD
+// ==========================================
 
+// Create Opportunity
+app.post("/api/opportunities", async (req, res) => {
+  if (!req.session.accessToken || !req.session.instanceUrl) {
+    return res.status(401).json({
+      message: "Please log in to Salesforce first",
+    });
+  }
+
+  try {
+    const response = await axios.post(
+      `${req.session.instanceUrl}/services/data/v65.0/sobjects/Opportunity`,
+      {
+        Name: req.body.Name,
+        StageName: req.body.StageName,
+        CloseDate: req.body.CloseDate,
+        Amount: req.body.Amount,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${req.session.accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    res.status(201).json(response.data);
+  } catch (error) {
+    console.error(
+      "Opportunity Create Error:",
+      error.response?.data || error.message
+    );
+
+    res.status(500).json({
+      message: "Failed to create opportunity",
+      error: error.response?.data || error.message,
+    });
+  }
+});
+
+// Get Opportunities
+app.get("/api/opportunities", async (req, res) => {
+  if (!req.session.accessToken || !req.session.instanceUrl) {
+    return res.status(401).json({
+      message: "Please log in to Salesforce first",
+    });
+  }
+
+  try {
+    const response = await axios.get(
+      `${req.session.instanceUrl}/services/data/v65.0/query`,
+      {
+        params: {
+          q: "SELECT Id, Name, StageName, CloseDate, Amount FROM Opportunity LIMIT 20",
+        },
+        headers: {
+          Authorization: `Bearer ${req.session.accessToken}`,
+        },
+      }
+    );
+
+    res.json(response.data.records);
+  } catch (error) {
+    console.error(
+      "Opportunity Get Error:",
+      error.response?.data || error.message
+    );
+
+    res.status(500).json({
+      message: "Failed to fetch opportunities",
+    });
+  }
+});
+
+// Update Opportunity
+app.patch("/api/opportunities/:id", async (req, res) => {
+  if (!req.session.accessToken || !req.session.instanceUrl) {
+    return res.status(401).json({
+      message: "Please log in to Salesforce first",
+    });
+  }
+
+  try {
+    const opportunityId = req.params.id;
+
+    await axios.patch(
+      `${req.session.instanceUrl}/services/data/v65.0/sobjects/Opportunity/${opportunityId}`,
+      {
+        Name: req.body.Name,
+        StageName: req.body.StageName,
+        CloseDate: req.body.CloseDate,
+        Amount: req.body.Amount,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${req.session.accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    res.json({
+      message: "Opportunity updated successfully",
+      id: opportunityId,
+    });
+  } catch (error) {
+    console.error(
+      "Opportunity Update Error:",
+      error.response?.data || error.message
+    );
+
+    res.status(500).json({
+      message: "Failed to update opportunity",
+      error: error.response?.data || error.message,
+    });
+  }
+});
+
+// Delete Opportunity
+app.delete("/api/opportunities/:id", async (req, res) => {
+  if (!req.session.accessToken || !req.session.instanceUrl) {
+    return res.status(401).json({
+      message: "Please log in to Salesforce first",
+    });
+  }
+
+  try {
+    const opportunityId = req.params.id;
+
+    await axios.delete(
+      `${req.session.instanceUrl}/services/data/v65.0/sobjects/Opportunity/${opportunityId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${req.session.accessToken}`,
+        },
+      }
+    );
+
+    res.json({
+      message: "Opportunity deleted successfully",
+      id: opportunityId,
+    });
+  } catch (error) {
+    console.error(
+      "Opportunity Delete Error:",
+      error.response?.data || error.message
+    );
+
+    res.status(500).json({
+      message: "Failed to delete opportunity",
+      error: error.response?.data || error.message,
+    });
+  }
+});
 // ==========================================
 // Home Route
 // ==========================================
