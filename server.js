@@ -617,6 +617,166 @@ app.delete("/api/leads/:id", async (req, res) => {
   }
 });
 // ==========================================
+// CONTACT CRUD
+// ==========================================
+
+// Create Contact
+app.post("/api/contacts", async (req, res) => {
+  if (!req.session.accessToken || !req.session.instanceUrl) {
+    return res.status(401).json({
+      message: "Please log in to Salesforce first",
+    });
+  }
+
+  try {
+    const response = await axios.post(
+      `${req.session.instanceUrl}/services/data/v65.0/sobjects/Contact`,
+      {
+        FirstName: req.body.FirstName,
+        LastName: req.body.LastName,
+        Email: req.body.Email,
+        Phone: req.body.Phone,
+        AccountId: req.body.AccountId || undefined,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${req.session.accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    res.status(201).json(response.data);
+  } catch (error) {
+    console.error(
+      "Contact Create Error:",
+      error.response?.data || error.message
+    );
+
+    res.status(500).json({
+      message: "Failed to create contact",
+      error: error.response?.data || error.message,
+    });
+  }
+});
+
+// Get Contacts
+app.get("/api/contacts", async (req, res) => {
+  if (!req.session.accessToken || !req.session.instanceUrl) {
+    return res.status(401).json({
+      message: "Please log in to Salesforce first",
+    });
+  }
+
+  try {
+    const response = await axios.get(
+      `${req.session.instanceUrl}/services/data/v65.0/query`,
+      {
+        params: {
+          q: "SELECT Id, FirstName, LastName, Email, Phone, AccountId FROM Contact LIMIT 20",
+        },
+        headers: {
+          Authorization: `Bearer ${req.session.accessToken}`,
+        },
+      }
+    );
+
+    res.json(response.data.records);
+  } catch (error) {
+    console.error(
+      "Contact Get Error:",
+      error.response?.data || error.message
+    );
+
+    res.status(500).json({
+      message: "Failed to fetch contacts",
+      error: error.response?.data || error.message,
+    });
+  }
+});
+
+// Update Contact
+app.patch("/api/contacts/:id", async (req, res) => {
+  if (!req.session.accessToken || !req.session.instanceUrl) {
+    return res.status(401).json({
+      message: "Please log in to Salesforce first",
+    });
+  }
+
+  try {
+    const contactId = req.params.id;
+
+    await axios.patch(
+      `${req.session.instanceUrl}/services/data/v65.0/sobjects/Contact/${contactId}`,
+      {
+        FirstName: req.body.FirstName,
+        LastName: req.body.LastName,
+        Email: req.body.Email,
+        Phone: req.body.Phone,
+        AccountId: req.body.AccountId || undefined,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${req.session.accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    res.json({
+      message: "Contact updated successfully",
+      id: contactId,
+    });
+  } catch (error) {
+    console.error(
+      "Contact Update Error:",
+      error.response?.data || error.message
+    );
+
+    res.status(500).json({
+      message: "Failed to update contact",
+      error: error.response?.data || error.message,
+    });
+  }
+});
+
+// Delete Contact
+app.delete("/api/contacts/:id", async (req, res) => {
+  if (!req.session.accessToken || !req.session.instanceUrl) {
+    return res.status(401).json({
+      message: "Please log in to Salesforce first",
+    });
+  }
+
+  try {
+    const contactId = req.params.id;
+
+    await axios.delete(
+      `${req.session.instanceUrl}/services/data/v65.0/sobjects/Contact/${contactId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${req.session.accessToken}`,
+        },
+      }
+    );
+
+    res.json({
+      message: "Contact deleted successfully",
+      id: contactId,
+    });
+  } catch (error) {
+    console.error(
+      "Contact Delete Error:",
+      error.response?.data || error.message
+    );
+
+    res.status(500).json({
+      message: "Failed to delete contact",
+      error: error.response?.data || error.message,
+    });
+  }
+});
+// ==========================================
 // Home Route
 // ==========================================
 
