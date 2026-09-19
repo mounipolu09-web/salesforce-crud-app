@@ -456,6 +456,167 @@ app.delete("/api/opportunities/:id", async (req, res) => {
   }
 });
 // ==========================================
+// LEAD CRUD
+// ==========================================
+
+// Create Lead
+app.post("/api/leads", async (req, res) => {
+  if (!req.session.accessToken || !req.session.instanceUrl) {
+    return res.status(401).json({
+      message: "Please log in to Salesforce first",
+    });
+  }
+
+  try {
+    const response = await axios.post(
+      `${req.session.instanceUrl}/services/data/v65.0/sobjects/Lead`,
+      {
+        FirstName: req.body.FirstName,
+        LastName: req.body.LastName,
+        Company: req.body.Company,
+        Email: req.body.Email,
+        Phone: req.body.Phone,
+        Status: req.body.Status,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${req.session.accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    res.status(201).json(response.data);
+  } catch (error) {
+    console.error(
+      "Lead Create Error:",
+      error.response?.data || error.message
+    );
+
+    res.status(500).json({
+      message: "Failed to create lead",
+      error: error.response?.data || error.message,
+    });
+  }
+});
+
+// Get Leads
+app.get("/api/leads", async (req, res) => {
+  if (!req.session.accessToken || !req.session.instanceUrl) {
+    return res.status(401).json({
+      message: "Please log in to Salesforce first",
+    });
+  }
+
+  try {
+    const response = await axios.get(
+      `${req.session.instanceUrl}/services/data/v65.0/query`,
+      {
+        params: {
+          q: "SELECT Id, FirstName, LastName, Company, Email, Phone, Status FROM Lead LIMIT 20",
+        },
+        headers: {
+          Authorization: `Bearer ${req.session.accessToken}`,
+        },
+      }
+    );
+
+    res.json(response.data.records);
+  } catch (error) {
+    console.error(
+      "Lead Get Error:",
+      error.response?.data || error.message
+    );
+
+    res.status(500).json({
+      message: "Failed to fetch leads",
+    });
+  }
+});
+
+// Update Lead
+app.patch("/api/leads/:id", async (req, res) => {
+  if (!req.session.accessToken || !req.session.instanceUrl) {
+    return res.status(401).json({
+      message: "Please log in to Salesforce first",
+    });
+  }
+
+  try {
+    const leadId = req.params.id;
+
+    await axios.patch(
+      `${req.session.instanceUrl}/services/data/v65.0/sobjects/Lead/${leadId}`,
+      {
+        FirstName: req.body.FirstName,
+        LastName: req.body.LastName,
+        Company: req.body.Company,
+        Email: req.body.Email,
+        Phone: req.body.Phone,
+        Status: req.body.Status,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${req.session.accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    res.json({
+      message: "Lead updated successfully",
+      id: leadId,
+    });
+  } catch (error) {
+    console.error(
+      "Lead Update Error:",
+      error.response?.data || error.message
+    );
+
+    res.status(500).json({
+      message: "Failed to update lead",
+      error: error.response?.data || error.message,
+    });
+  }
+});
+
+// Delete Lead
+app.delete("/api/leads/:id", async (req, res) => {
+  if (!req.session.accessToken || !req.session.instanceUrl) {
+    return res.status(401).json({
+      message: "Please log in to Salesforce first",
+    });
+  }
+
+  try {
+    const leadId = req.params.id;
+
+    await axios.delete(
+      `${req.session.instanceUrl}/services/data/v65.0/sobjects/Lead/${leadId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${req.session.accessToken}`,
+        },
+      }
+    );
+
+    res.json({
+      message: "Lead deleted successfully",
+      id: leadId,
+    });
+  } catch (error) {
+    console.error(
+      "Lead Delete Error:",
+      error.response?.data || error.message
+    );
+
+    res.status(500).json({
+      message: "Failed to delete lead",
+      error: error.response?.data || error.message,
+    });
+  }
+});
+// ==========================================
 // Home Route
 // ==========================================
 
