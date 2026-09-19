@@ -61,8 +61,14 @@ app.get("/auth/login", (req, res) => {
 });
   // Create Salesforce Account
 app.post("/api/accounts", async (req, res) => {
-    console.log("Session:", req.session);
-    try {
+
+  if (!req.session.accessToken || !req.session.instanceUrl) {
+    return res.status(401).json({
+      message: "Please log in to Salesforce first"
+    });
+  }
+
+     try {
       const response = await axios.post(
         `${req.session.instanceUrl}/services/data/v65.0/sobjects/Account`,
         {
@@ -93,7 +99,6 @@ app.post("/api/accounts", async (req, res) => {
   });
   // Update Salesforce Account
 app.patch("/api/accounts/:id", async (req, res) => {
-  console.log("Session:", req.session);
 
   if (!req.session.accessToken || !req.session.instanceUrl) {
     return res.status(401).json({
@@ -200,8 +205,10 @@ app.get("/api/accounts", async (req, res) => {
 // Salesforce OAuth Callback
 app.get("/auth/callback", async (req, res) => {
     const { code } = req.query;
-    console.log("Code Verifier:", req.session.codeVerifier);
-  
+if (!req.session.codeVerifier) {
+  console.error("OAuth session or code verifier is missing");
+  return res.status(400).send("OAuth session expired. Please try again.");
+}  
     if (!code) {
       return res.status(400).send("Authorization code missing");
     }
