@@ -40,6 +40,27 @@ app.get("/auth/login", (req, res) => {
     .update(codeVerifier)
     .digest("base64url");
 
+  const state = Buffer.from(
+    JSON.stringify({ codeVerifier })
+  ).toString("base64url");
+
+  const authUrl =
+    `${process.env.SF_LOGIN_URL}/services/oauth2/authorize` +
+    `?response_type=code` +
+    `&client_id=${encodeURIComponent(process.env.SF_CLIENT_ID)}` +
+    `&redirect_uri=${encodeURIComponent(process.env.SF_REDIRECT_URI)}` +
+    `&code_challenge=${encodeURIComponent(codeChallenge)}` +
+    `&code_challenge_method=S256` +
+    `&state=${encodeURIComponent(state)}`;
+
+  res.redirect(authUrl);
+});  const codeVerifier = crypto.randomBytes(32).toString("hex");
+
+  const codeChallenge = crypto
+    .createHash("sha256")
+    .update(codeVerifier)
+    .digest("base64url");
+
   req.session.codeVerifier = codeVerifier;
 
   req.session.save((err) => {
@@ -58,7 +79,7 @@ app.get("/auth/login", (req, res) => {
 
     res.redirect(authUrl);
   });
-});
+
   // Create Salesforce Account
 app.post("/api/accounts", async (req, res) => {
 
@@ -204,8 +225,27 @@ app.get("/api/accounts", async (req, res) => {
   });
 // Salesforce OAuth Callback
 app.get("/auth/callback", async (req, res) => {
-    const { code } = req.query;
-if (!req.session.codeVerifier) {
+const { code, state } = req.query;
+
+if (!code || !state) {
+  return res.status(400).send("Authorization code or state missing");
+}
+
+let codeVerifier;
+
+try {
+  const decodedState = JSON.parse(
+    Buffer.from(state, "base64url").toString()
+  );
+
+  codeVerifier = decodedState.codeVerifier;
+} catch (error) {
+  return res.status(400).send("Invalid OAuth state");
+}
+
+if (!codeVerifier) {
+  return res.status(400).send("OAuth code verifier missing");
+}if (!req.session.codeVerifier) {
   console.error("OAuth session or code verifier is missing");
   return res.status(400).send("OAuth session expired. Please try again.");
 }  
@@ -222,8 +262,7 @@ if (!req.session.codeVerifier) {
           client_secret: process.env.SF_CLIENT_SECRET,
           redirect_uri: process.env.SF_REDIRECT_URI,
           code: code,
-          code_verifier: req.session.codeVerifier,
-        }).toString(),
+code_verifier: codeVerifier,        }).toString(),
         {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
