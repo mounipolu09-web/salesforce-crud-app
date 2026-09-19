@@ -61,8 +61,6 @@ app.get("/auth/login", (req, res) => {
     .update(codeVerifier)
     .digest("base64url");
 
-  req.session.codeVerifier = codeVerifier;
-
   req.session.save((err) => {
     if (err) {
       console.error("Session Save Error:", err);
