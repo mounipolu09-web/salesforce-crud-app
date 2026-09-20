@@ -1,6 +1,9 @@
 <h1>Salesforce CRUD Application</h1>
 
 <!-- Salesforce Object Dropdown -->
+<button (click)="loginToSalesforce()">
+  Login to Salesforce
+</button>
 <label for="objectSelect">Select Object:</label>
 
 <select
@@ -19,7 +22,10 @@
 
 <hr>
 
-<!-- Account Section -->
+<!-- ========================================== -->
+<!-- ACCOUNT SECTION -->
+<!-- ========================================== -->
+
 <div *ngIf="selectedObject === 'Account'">
 
   <h2>Create New Account</h2>
@@ -27,6 +33,7 @@
   <form (ngSubmit)="createAccount()">
 
     <label>Account Name:</label>
+
     <input
       type="text"
       [(ngModel)]="newAccount.Name"
@@ -37,6 +44,7 @@
     <br><br>
 
     <label>Industry:</label>
+
     <input
       type="text"
       [(ngModel)]="newAccount.Industry"
@@ -46,6 +54,7 @@
     <br><br>
 
     <label>Phone:</label>
+
     <input
       type="text"
       [(ngModel)]="newAccount.Phone"
@@ -61,6 +70,7 @@
   <hr>
 
   <!-- Edit Account -->
+
   <div *ngIf="editingAccount">
 
     <h2>Edit Account</h2>
@@ -68,6 +78,7 @@
     <form (ngSubmit)="updateAccount()">
 
       <label>Account Name:</label>
+
       <input
         type="text"
         [(ngModel)]="editingAccount.Name"
@@ -78,6 +89,7 @@
       <br><br>
 
       <label>Industry:</label>
+
       <input
         type="text"
         [(ngModel)]="editingAccount.Industry"
@@ -87,6 +99,7 @@
       <br><br>
 
       <label>Phone:</label>
+
       <input
         type="text"
         [(ngModel)]="editingAccount.Phone"
@@ -111,17 +124,20 @@
   </div>
 
   <!-- Account List -->
+
   <h2>Account List</h2>
 
   <table border="1" cellpadding="10">
 
     <thead>
+
       <tr>
         <th>Name</th>
         <th>Industry</th>
         <th>Phone</th>
         <th>Actions</th>
       </tr>
+
     </thead>
 
     <tbody>
@@ -129,7 +145,9 @@
       <tr *ngFor="let account of accounts">
 
         <td>{{ account.Name }}</td>
+
         <td>{{ account.Industry }}</td>
+
         <td>{{ account.Phone }}</td>
 
         <td>
@@ -156,8 +174,561 @@
 
 </div>
 
-<!-- Other Salesforce Objects -->
-<div *ngIf="selectedObject !== 'Account'">
+<!-- ========================================== -->
+<!-- OPPORTUNITY SECTION -->
+<!-- ========================================== -->
+
+<div *ngIf="selectedObject === 'Opportunity'">
+
+  <h2>Create New Opportunity</h2>
+
+  <form (ngSubmit)="createOpportunity()">
+
+    <label>Opportunity Name:</label>
+
+    <input
+      type="text"
+      [(ngModel)]="newOpportunity.Name"
+      name="opportunityName"
+      required
+    />
+
+    <br><br>
+
+    <label>Stage:</label>
+
+    <select
+      [(ngModel)]="newOpportunity.StageName"
+      name="stageName"
+      required
+    >
+      <option value="">Select Stage</option>
+      <option value="Prospecting">Prospecting</option>
+      <option value="Qualification">Qualification</option>
+      <option value="Needs Analysis">Needs Analysis</option>
+      <option value="Value Proposition">Value Proposition</option>
+      <option value="Id. Decision Makers">Id. Decision Makers</option>
+      <option value="Perception Analysis">Perception Analysis</option>
+      <option value="Proposal/Price Quote">Proposal/Price Quote</option>
+      <option value="Negotiation/Review">Negotiation/Review</option>
+      <option value="Closed Won">Closed Won</option>
+      <option value="Closed Lost">Closed Lost</option>
+    </select>
+
+    <br><br>
+
+    <label>Close Date:</label>
+
+    <input
+      type="date"
+      [(ngModel)]="newOpportunity.CloseDate"
+      name="closeDate"
+      required
+    />
+
+    <br><br>
+
+    <label>Amount:</label>
+
+    <input
+      type="number"
+      [(ngModel)]="newOpportunity.Amount"
+      name="amount"
+    />
+
+    <br><br>
+
+    <button type="submit">Create Opportunity</button>
+
+  </form>
+  
+</div>
+<!-- ========================================== -->
+<!-- LEAD SECTION -->
+<!-- ========================================== -->
+
+<div *ngIf="selectedObject === 'Lead'">
+
+  <h2>Create New Lead</h2>
+
+  <form (ngSubmit)="createLead()">
+
+    <label>First Name:</label>
+    <input
+      type="text"
+      [(ngModel)]="newLead.FirstName"
+      name="firstName"
+    />
+
+    <br><br>
+
+    <label>Last Name:</label>
+    <input
+      type="text"
+      [(ngModel)]="newLead.LastName"
+      name="lastName"
+      required
+    />
+
+    <br><br>
+
+    <label>Company:</label>
+    <input
+      type="text"
+      [(ngModel)]="newLead.Company"
+      name="company"
+      required
+    />
+
+    <br><br>
+
+    <label>Email:</label>
+    <input
+      type="email"
+      [(ngModel)]="newLead.Email"
+      name="email"
+    />
+
+    <br><br>
+
+    <label>Phone:</label>
+    <input
+      type="text"
+      [(ngModel)]="newLead.Phone"
+      name="phone"
+    />
+
+    <br><br>
+
+    <label>Status:</label>
+    <select
+      [(ngModel)]="newLead.Status"
+      name="status"
+      required
+    >
+      <option value="Open - Not Contacted">
+        Open - Not Contacted
+      </option>
+      <option value="Working - Contacted">
+        Working - Contacted
+      </option>
+      <option value="Closed - Converted">
+        Closed - Converted
+      </option>
+      <option value="Closed - Not Converted">
+        Closed - Not Converted
+      </option>
+    </select>
+
+    <br><br>
+
+    <button type="submit">Create Lead</button>
+
+  </form>
+
+
+  <hr>
+
+  <!-- Edit Lead -->
+
+  <div *ngIf="editingLead">
+
+    <h2>Edit Lead</h2>
+
+    <form (ngSubmit)="updateLead()">
+
+      <label>First Name:</label>
+      <input
+        type="text"
+        [(ngModel)]="editingLead.FirstName"
+        name="editFirstName"
+      />
+
+      <br><br>
+
+      <label>Last Name:</label>
+      <input
+        type="text"
+        [(ngModel)]="editingLead.LastName"
+        name="editLastName"
+        required
+      />
+
+      <br><br>
+
+      <label>Company:</label>
+      <input
+        type="text"
+        [(ngModel)]="editingLead.Company"
+        name="editCompany"
+        required
+      />
+
+      <br><br>
+
+      <label>Email:</label>
+      <input
+        type="email"
+        [(ngModel)]="editingLead.Email"
+        name="editEmail"
+      />
+
+      <br><br>
+
+      <label>Phone:</label>
+      <input
+        type="text"
+        [(ngModel)]="editingLead.Phone"
+        name="editPhone"
+      />
+
+      <br><br>
+
+      <label>Status:</label>
+      <select
+        [(ngModel)]="editingLead.Status"
+        name="editStatus"
+        required
+      >
+        <option value="Open - Not Contacted">
+          Open - Not Contacted
+        </option>
+        <option value="Working - Contacted">
+          Working - Contacted
+        </option>
+        <option value="Closed - Converted">
+          Closed - Converted
+        </option>
+        <option value="Closed - Not Converted">
+          Closed - Not Converted
+        </option>
+      </select>
+
+      <br><br>
+
+      <button type="submit">Update Lead</button>
+
+      <button
+        type="button"
+        (click)="cancelLeadEdit()"
+      >
+        Cancel
+      </button>
+
+    </form>
+
+    <hr>
+
+  </div>
+
+  <!-- Lead List -->
+
+  <h2>Lead List</h2>
+
+  <table border="1" cellpadding="10">
+
+    <thead>
+      <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Company</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      <tr *ngFor="let lead of leads">
+
+        <td>{{ lead.FirstName }}</td>
+        <td>{{ lead.LastName }}</td>
+        <td>{{ lead.Company }}</td>
+        <td>{{ lead.Email }}</td>
+        <td>{{ lead.Phone }}</td>
+        <td>{{ lead.Status }}</td>
+
+        <td>
+          <button (click)="editLead(lead)">
+            Edit
+          </button>
+
+          <button (click)="deleteLead(lead.Id)">
+            Delete
+          </button>
+        </td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+
+  <hr>
+
+  <!-- Edit Opportunity -->
+
+  <div *ngIf="editingOpportunity">
+
+    <h2>Edit Opportunity</h2>
+
+    <form (ngSubmit)="updateOpportunity()">
+
+      <label>Opportunity Name:</label>
+
+      <input
+        type="text"
+        [(ngModel)]="editingOpportunity.Name"
+        name="editOpportunityName"
+        required
+      />
+
+      <br><br>
+
+      <label>Stage:</label>
+
+      <select
+        [(ngModel)]="editingOpportunity.StageName"
+        name="editStageName"
+        required
+      >
+        <option value="Prospecting">Prospecting</option>
+        <option value="Qualification">Qualification</option>
+        <option value="Needs Analysis">Needs Analysis</option>
+        <option value="Value Proposition">Value Proposition</option>
+        <option value="Id. Decision Makers">Id. Decision Makers</option>
+        <option value="Perception Analysis">Perception Analysis</option>
+        <option value="Proposal/Price Quote">Proposal/Price Quote</option>
+        <option value="Negotiation/Review">Negotiation/Review</option>
+        <option value="Closed Won">Closed Won</option>
+        <option value="Closed Lost">Closed Lost</option>
+      </select>
+
+      <br><br>
+
+      <label>Close Date:</label>
+
+      <input
+        type="date"
+        [(ngModel)]="editingOpportunity.CloseDate"
+        name="editCloseDate"
+        required
+      />
+
+      <br><br>
+
+      <label>Amount:</label>
+
+      <input
+        type="number"
+        [(ngModel)]="editingOpportunity.Amount"
+        name="editAmount"
+      />
+
+      <br><br>
+
+      <button type="submit">Update Opportunity</button>
+
+      <button
+        type="button"
+        (click)="cancelOpportunityEdit()"
+      >
+        Cancel
+      </button>
+
+    </form>
+
+    <hr>
+
+  </div>
+
+  <!-- Opportunity List -->
+
+  <h2>Opportunity List</h2>
+
+  <table border="1" cellpadding="10">
+
+    <thead>
+
+      <tr>
+        <th>Name</th>
+        <th>Stage</th>
+        <th>Close Date</th>
+        <th>Amount</th>
+        <th>Actions</th>
+      </tr>
+
+    </thead>
+
+    <tbody>
+
+      <tr *ngFor="let opportunity of opportunities">
+
+        <td>{{ opportunity.Name }}</td>
+
+        <td>{{ opportunity.StageName }}</td>
+
+        <td>{{ opportunity.CloseDate }}</td>
+
+        <td>{{ opportunity.Amount }}</td>
+
+        <td>
+
+          <button
+            (click)="editOpportunity(opportunity)"
+          >
+            Edit
+          </button>
+
+          <button
+            (click)="deleteOpportunity(opportunity.Id)"
+          >
+            Delete
+          </button>
+
+        </td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+</div>
+<!-- ========================================== -->
+<!-- CONTACT SECTION -->
+<!-- ========================================== -->
+
+<div *ngIf="selectedObject === 'Contact'">
+
+  <h2>Contact Management</h2>
+
+  <!-- Create Contact -->
+  <h3>Create Contact</h3>
+
+  <input
+    type="text"
+    placeholder="First Name"
+    [(ngModel)]="newContact.FirstName"
+  />
+
+  <input
+    type="text"
+    placeholder="Last Name"
+    [(ngModel)]="newContact.LastName"
+  />
+
+  <input
+    type="email"
+    placeholder="Email"
+    [(ngModel)]="newContact.Email"
+  />
+
+  <input
+    type="text"
+    placeholder="Phone"
+    [(ngModel)]="newContact.Phone"
+  />
+
+  <button (click)="createContact()">
+    Create Contact
+  </button>
+
+  <!-- Edit Contact -->
+  <div *ngIf="editingContact">
+
+    <h3>Edit Contact</h3>
+
+    <input
+      type="text"
+      placeholder="First Name"
+      [(ngModel)]="editingContact.FirstName"
+    />
+
+    <input
+      type="text"
+      placeholder="Last Name"
+      [(ngModel)]="editingContact.LastName"
+    />
+
+    <input
+      type="email"
+      placeholder="Email"
+      [(ngModel)]="editingContact.Email"
+    />
+
+    <input
+      type="text"
+      placeholder="Phone"
+      [(ngModel)]="editingContact.Phone"
+    />
+
+    <button (click)="updateContact()">
+      Update Contact
+    </button>
+
+    <button (click)="cancelContactEdit()">
+      Cancel
+    </button>
+
+  </div>
+
+  <!-- Contact List -->
+  <h3>Contact List</h3>
+
+  <table border="1">
+
+    <thead>
+      <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      <tr *ngFor="let contact of contacts">
+
+        <td>{{ contact.FirstName }}</td>
+        <td>{{ contact.LastName }}</td>
+        <td>{{ contact.Email }}</td>
+        <td>{{ contact.Phone }}</td>
+
+        <td>
+          <button (click)="editContact(contact)">
+            Edit
+          </button>
+
+          <button (click)="deleteContact(contact.Id)">
+            Delete
+          </button>
+        </td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+</div>
+
+<!-- ========================================== -->
+<!-- OTHER OBJECTS -->
+<!-- ========================================== -->
+
+<div
+  *ngIf="
+    selectedObject !== 'Account' &&
+    selectedObject !== 'Opportunity' &&
+    selectedObject !== 'Lead' &&
+    selectedObject !== 'Contact'
+  "
+>
 
   <h2>{{ selectedObject }}</h2>
 

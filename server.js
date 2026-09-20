@@ -673,7 +673,10 @@ app.get("/api/contacts", async (req, res) => {
       `${req.session.instanceUrl}/services/data/v65.0/query`,
       {
         params: {
-          q: "SELECT Id, FirstName, LastName, Email, Phone, AccountId FROM Contact LIMIT 20",
+         q: `SELECT Id, FirstName, LastName, Email, Phone, CreatedDate
+    FROM Contact
+    ORDER BY CreatedDate DESC
+    LIMIT 20`
         },
         headers: {
           Authorization: `Bearer ${req.session.accessToken}`,
