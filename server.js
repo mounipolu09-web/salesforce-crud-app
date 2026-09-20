@@ -779,6 +779,127 @@ app.delete("/api/contacts/:id", async (req, res) => {
     });
   }
 });
+// ================= CASE CRUD =================
+
+// CREATE CASE
+app.post("/api/cases", async (req, res) => {
+  try {
+    if (!req.session.accessToken) {
+      return res.status(401).json({ error: "Please log in to Salesforce first." });
+    }
+
+    const response = await axios.post(
+      `${req.session.instanceUrl}/services/data/v65.0/sobjects/Case`,
+      {
+        Subject: req.body.Subject,
+        Description: req.body.Description,
+        Status: req.body.Status,
+        Priority: req.body.Priority,
+        Origin: req.body.Origin
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${req.session.accessToken}`,
+          "Content-Type": "application/json"
+        }
+      }
+    );
+
+    res.json(response.data);
+  } catch (error) {
+    console.error("Create Case Error:", error.response?.data || error.message);
+    res.status(500).json(error.response?.data || { error: error.message });
+  }
+});
+
+
+// GET CASES
+app.get("/api/cases", async (req, res) => {
+  try {
+    if (!req.session.accessToken) {
+      return res.status(401).json({ error: "Please log in to Salesforce first." });
+    }
+
+    const response = await axios.get(
+      `${req.session.instanceUrl}/services/data/v65.0/query`,
+      {
+        params: {
+          q: `SELECT Id, Subject, Description, Status, Priority, Origin, CreatedDate
+              FROM Case
+              ORDER BY CreatedDate DESC
+              LIMIT 20`
+        },
+        headers: {
+          Authorization: `Bearer ${req.session.accessToken}`
+        }
+      }
+    );
+
+    res.json(response.data.records);
+  } catch (error) {
+    console.error("Get Cases Error:", error.response?.data || error.message);
+    res.status(500).json(error.response?.data || { error: error.message });
+  }
+});
+
+
+// UPDATE CASE
+app.patch("/api/cases/:id", async (req, res) => {
+  try {
+    if (!req.session.accessToken) {
+      return res.status(401).json({ error: "Please log in to Salesforce first." });
+    }
+
+    const response = await axios.patch(
+      `${req.session.instanceUrl}/services/data/v65.0/sobjects/Case/${req.params.id}`,
+      {
+        Subject: req.body.Subject,
+        Description: req.body.Description,
+        Status: req.body.Status,
+        Priority: req.body.Priority,
+        Origin: req.body.Origin
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${req.session.accessToken}`,
+          "Content-Type": "application/json"
+        }
+      }
+    );
+
+    res.json({
+      message: "Case updated successfully",
+      data: response.data
+    });
+  } catch (error) {
+    console.error("Update Case Error:", error.response?.data || error.message);
+    res.status(500).json(error.response?.data || { error: error.message });
+  }
+});
+
+
+// DELETE CASE
+app.delete("/api/cases/:id", async (req, res) => {
+  try {
+    if (!req.session.accessToken) {
+      return res.status(401).json({ error: "Please log in to Salesforce first." });
+    }
+
+    await axios.delete(
+      `${req.session.instanceUrl}/services/data/v65.0/sobjects/Case/${req.params.id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${req.session.accessToken}`
+        }
+      }
+    );
+
+    res.json({ message: "Case deleted successfully" });
+  } catch (error) {
+    console.error("Delete Case Error:", error.response?.data || error.message);
+    res.status(500).json(error.response?.data || { error: error.message });
+  }
+});
 // ==========================================
 // Home Route
 // ==========================================
