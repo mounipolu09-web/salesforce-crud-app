@@ -1,5 +1,6 @@
 import { ContactService } from './services/contact.service';
 import { LeadService } from './services/lead.service';
+import { CaseService } from './services/case.service';
 import { Component, OnInit } from '@angular/core';
 import { AccountService } from './services/account.service';
 import { OpportunityService } from './services/opportunity.service';
@@ -21,7 +22,17 @@ export class AppComponent implements OnInit {
     'Contact',
     'Case'
   ];
+cases: any[] = [];
 
+newCase: any = {
+  Subject: '',
+  Description: '',
+  Status: 'New',
+  Priority: 'Medium',
+  Origin: 'Web'
+};
+
+editingCase: any = null;
   // Account Properties
   accounts: any[] = [];
 
@@ -72,7 +83,8 @@ editingLead: any = null;
   private accountService: AccountService,
   private opportunityService: OpportunityService,
   private leadService: LeadService,
-  private contactService: ContactService
+  private contactService: ContactService,
+  private caseService: CaseService
 
 ) {}
 
@@ -99,13 +111,18 @@ editingLead: any = null;
   } else if (this.selectedObject === 'Contact') {
 
     this.loadContacts();
+    
 
-  } else {
+  }
+  else if (this.selectedObject === 'Case') {
+  this.loadCases();
+} else {
 
     this.accounts = [];
     this.opportunities = [];
     this.leads = [];
     this.contacts = [];
+    this.cases = [];
 
   }
 
@@ -472,6 +489,65 @@ updateContact(): void {
 
   });
 
+}
+loadCases(): void {
+  this.caseService.getCases().subscribe({
+    next: data => this.cases = data,
+    error: err => console.error('Error loading cases:', err)
+  });
+}
+
+createCase(): void {
+  this.caseService.createCase(this.newCase).subscribe({
+    next: () => {
+      alert('Case created successfully');
+
+      this.newCase = {
+        Subject: '',
+        Description: '',
+        Status: 'New',
+        Priority: 'Medium',
+        Origin: 'Web'
+      };
+
+      this.loadCases();
+    },
+    error: err => console.error('Error creating case:', err)
+  });
+}
+
+editCase(caseItem: any): void {
+  this.editingCase = { ...caseItem };
+}
+
+cancelCaseEdit(): void {
+  this.editingCase = null;
+}
+
+updateCase(): void {
+  this.caseService.updateCase(
+    this.editingCase.Id,
+    this.editingCase
+  ).subscribe({
+    next: () => {
+      alert('Case updated successfully');
+      this.editingCase = null;
+      this.loadCases();
+    },
+    error: err => console.error('Error updating case:', err)
+  });
+}
+
+deleteCase(id: string): void {
+  if (confirm('Are you sure you want to delete this case?')) {
+    this.caseService.deleteCase(id).subscribe({
+      next: () => {
+        alert('Case deleted successfully');
+        this.loadCases();
+      },
+      error: err => console.error('Error deleting case:', err)
+    });
+  }
 }
   // ==========================================
   // OPPORTUNITY CRUD

@@ -716,7 +716,144 @@
   </table>
 
 </div>
+<!-- CASE SECTION -->
+<div *ngIf="selectedObject === 'Case'">
 
+  <h2>Case Management</h2>
+
+  <!-- Create Case Form -->
+  <div>
+    <h3>Create Case</h3>
+
+    <input
+      type="text"
+      placeholder="Subject"
+      [(ngModel)]="newCase.Subject"
+    />
+
+    <textarea
+      placeholder="Description"
+      [(ngModel)]="newCase.Description">
+    </textarea>
+
+    <select [(ngModel)]="newCase.Status">
+      <option value="New">New</option>
+      <option value="Working">Working</option>
+      <option value="Escalated">Escalated</option>
+      <option value="Closed">Closed</option>
+    </select>
+
+    <select [(ngModel)]="newCase.Priority">
+      <option value="High">High</option>
+      <option value="Medium">Medium</option>
+      <option value="Low">Low</option>
+    </select>
+
+    <select [(ngModel)]="newCase.Origin">
+      <option value="Web">Web</option>
+      <option value="Phone">Phone</option>
+      <option value="Email">Email</option>
+    </select>
+
+    <button (click)="createCase()">
+      Create Case
+    </button>
+  </div>
+
+  <hr>
+
+  <!-- Edit Case Form -->
+  <div *ngIf="editingCase">
+
+    <h3>Edit Case</h3>
+
+    <input
+      type="text"
+      placeholder="Subject"
+      [(ngModel)]="editingCase.Subject"
+    />
+
+    <textarea
+      placeholder="Description"
+      [(ngModel)]="editingCase.Description">
+    </textarea>
+
+    <select [(ngModel)]="editingCase.Status">
+      <option value="New">New</option>
+      <option value="Working">Working</option>
+      <option value="Escalated">Escalated</option>
+      <option value="Closed">Closed</option>
+    </select>
+
+    <select [(ngModel)]="editingCase.Priority">
+      <option value="High">High</option>
+      <option value="Medium">Medium</option>
+      <option value="Low">Low</option>
+    </select>
+
+    <select [(ngModel)]="editingCase.Origin">
+      <option value="Web">Web</option>
+      <option value="Phone">Phone</option>
+      <option value="Email">Email</option>
+    </select>
+
+    <button (click)="updateCase()">
+      Update Case
+    </button>
+
+    <button (click)="cancelCaseEdit()">
+      Cancel
+    </button>
+
+  </div>
+
+  <hr>
+
+  <!-- Case List -->
+  <h3>Case List</h3>
+
+  <button (click)="loadCases()">
+    Refresh Cases
+  </button>
+
+  <table border="1">
+
+    <thead>
+      <tr>
+        <th>Subject</th>
+        <th>Description</th>
+        <th>Status</th>
+        <th>Priority</th>
+        <th>Origin</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let caseItem of cases">
+
+        <td>{{ caseItem.Subject }}</td>
+        <td>{{ caseItem.Description }}</td>
+        <td>{{ caseItem.Status }}</td>
+        <td>{{ caseItem.Priority }}</td>
+        <td>{{ caseItem.Origin }}</td>
+
+        <td>
+          <button (click)="editCase(caseItem)">
+            Edit
+          </button>
+
+          <button (click)="deleteCase(caseItem.Id)">
+            Delete
+          </button>
+        </td>
+
+      </tr>
+    </tbody>
+
+  </table>
+
+</div>
 <!-- ========================================== -->
 <!-- OTHER OBJECTS -->
 <!-- ========================================== -->
@@ -726,7 +863,9 @@
     selectedObject !== 'Account' &&
     selectedObject !== 'Opportunity' &&
     selectedObject !== 'Lead' &&
-    selectedObject !== 'Contact'
+    selectedObject !== 'Contact' &&
+        selectedObject !== 'Case'
+
   "
 >
 
