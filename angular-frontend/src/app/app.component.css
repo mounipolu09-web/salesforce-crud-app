@@ -1,73 +1,308 @@
-/* Main container */
+/* Main Application */
+:host {
+  display: block;
+  min-height: 100vh;
+  padding: 30px;
+  background: #f4f7fb;
+  color: #263238;
+  font-family: Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+/* Main Heading */
 h1 {
   text-align: center;
-  color: #2c3e50;
+  color: #173f5f;
+  font-size: 32px;
   margin-bottom: 30px;
 }
 
+/* Section Headings */
 h2 {
-  color: #34495e;
+  color: #173f5f;
+  margin-top: 30px;
+  border-left: 5px solid #2196f3;
+  padding-left: 12px;
 }
 
-/* Form styling */
-form {
-  background-color: #f4f6f7;
-  padding: 20px;
-  border-radius: 8px;
-  max-width: 500px;
-  margin-bottom: 20px;
-}
-
-label {
-  display: inline-block;
-  width: 130px;
-  font-weight: bold;
-}
-
-input {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  margin-bottom: 5px;
-}
-
-/* Buttons */
-button {
-  padding: 8px 14px;
-  margin: 5px;
-  border: none;
-  border-radius: 4px;
-  background-color: #3498db;
-  color: white;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #2980b9;
-}
-
-/* Table styling */
-table {
-  width: 100%;
-  border-collapse: collapse;
+h3 {
+  color: #37474f;
   margin-top: 20px;
 }
 
-th {
-  background-color: #34495e;
+/* Login Button and Buttons */
+button {
+  background: #1976d2;
   color: white;
-  padding: 12px;
+  border: none;
+  padding: 10px 18px;
+  margin: 6px 5px 6px 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s ease;
+}
+
+button:hover {
+  background: #0d47a1;
+}
+
+/* Object Selection */
+label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+select {
+  padding: 10px;
+  border: 1px solid #c5ced8;
+  border-radius: 6px;
+  background: white;
+  font-size: 14px;
+  margin: 5px;
+}
+
+/* Form Inputs */
+input,
+textarea {
+  padding: 11px;
+  margin: 5px;
+  border: 1px solid #c5ced8;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #1976d2;
+  box-shadow: 0 0 4px rgba(25, 118, 210, 0.3);
+}
+
+textarea {
+  min-width: 220px;
+  min-height: 80px;
+  vertical-align: middle;
+  resize: vertical;
+}
+
+/* Horizontal Lines */
+hr {
+  border: none;
+  border-top: 1px solid #dce3ea;
+  margin: 25px 0;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+th {
+  background: #173f5f;
+  color: white;
+  padding: 14px;
+  text-align: center;
 }
 
 td {
-  padding: 10px;
+  padding: 13px;
+  border-bottom: 1px solid #e5eaf0;
   text-align: center;
 }
 
 tr:nth-child(even) {
-  background-color: #f2f2f2;
+  background: #f5f8fc;
 }
 
 tr:hover {
-  background-color: #eaf2f8;
+  background: #e3f2fd;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  :host {
+    padding: 15px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  input,
+  textarea,
+  select {
+    max-width: 100%;
+  }
+}
+/* Modern Form Cards */
+div:has(> h3) {
+  background: white;
+  padding: 24px;
+  margin: 20px 0;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+/* Form Alignment */
+div:has(> h3) label {
+  display: inline-block;
+  width: 140px;
+  font-weight: bold;
+  color: #37474f;
+}
+
+div:has(> h3) input,
+div:has(> h3) textarea,
+div:has(> h3) select {
+  margin: 8px;
+  min-width: 220px;
+}
+
+/* Form Headings */
+div:has(> h3) h3 {
+  margin-top: 0;
+  color: #173f5f;
+  border-bottom: 1px solid #e0e6ed;
+  padding-bottom: 12px;
+}
+
+/* Better Buttons */
+button {
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+/* Table Improvements */
+td {
+  max-width: 300px;
+  word-wrap: break-word;
+}
+
+td button {
+  min-width: 70px;
+}
+
+/* Mobile Layout */
+@media (max-width: 600px) {
+  div:has(> h3) label {
+    display: block;
+    width: auto;
+    margin-top: 10px;
+  }
+
+  div:has(> h3) input,
+  div:has(> h3) textarea,
+  div:has(> h3) select {
+    width: 100%;
+    min-width: 0;
+    margin: 8px 0;
+  }
+}
+/* Fix page alignment */
+:host {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+  padding: 30px;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+/* Better form spacing */
+h2 {
+  margin-top: 30px;
+  margin-bottom: 25px;
+}
+
+input,
+textarea,
+select {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Align form labels */
+label {
+  display: inline-block;
+  min-width: 120px;
+  text-align: right;
+  margin-right: 12px;
+}
+
+/* Prevent table from breaking the page */
+table {
+  max-width: 100%;
+  table-layout: auto;
+}
+
+@media (max-width: 600px) {
+  :host {
+    padding: 15px;
+  }
+
+  label {
+    display: block;
+    text-align: left;
+    margin-bottom: 5px;
+  }
+
+  input,
+  textarea,
+  select {
+    width: 100%;
+    margin: 5px 0 12px;
+  }
+}.form-card {
+  background: white;
+  padding: 28px;
+  margin: 20px 0 35px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  max-width: 750px;
+}
+
+.form-card label {
+  display: inline-block;
+  width: 130px;
+  text-align: right;
+  margin-right: 15px;
+}
+
+.form-card input {
+  width: 240px;
+}
+
+.form-card button {
+  margin-top: 20px;
+}.opportunity-scroll-container {
+  height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  margin-top: 15px;
+}
+
+.opportunity-scroll-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.opportunity-scroll-container thead th {
+  position: sticky;
+  top: 0;
+  background: white;
 }

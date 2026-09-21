@@ -45,15 +45,20 @@ editingCase: any = null;
   editingAccount: any = null;
 
   // Opportunity Properties
-  opportunities: any[] = [];
+opportunities: any[] = [];
 
-  newOpportunity = {
-    Name: '',
-    StageName: '',
-    CloseDate: '',
-    Amount: null
-  };
-      editingOpportunity: any = null;
+newOpportunity = {
+  Name: '',
+  StageName: '',
+  CloseDate: '',
+  Amount: null
+};
+
+editingOpportunity: any = null;
+
+opportunityPage: number = 1;
+isLoadingOpportunities: boolean = false;
+hasMoreOpportunities: boolean = true;
 
 // Lead Properties
 leads: any[] = [];
@@ -555,24 +560,74 @@ deleteCase(id: string): void {
 
   loadOpportunities(): void {
 
-    this.opportunityService.getOpportunities().subscribe({
+  // Prevent duplicate requests
+  if (this.isLoadingOpportunities || !this.hasMoreOpportunities) {
+    return;
+  }
+
+  this.isLoadingOpportunities = true;
+
+  console.log(
+    'Loading opportunities page:',
+    this.opportunityPage
+  );
+
+  this.opportunityService
+    .getOpportunities(this.opportunityPage)
+    .subscribe({
 
       next: (data) => {
 
-        this.opportunities = data;
+        console.log(
+          'Opportunities received:',
+          data
+        );
+
+        // Add new records to existing records
+        this.opportunities = [
+          ...this.opportunities,
+          ...data
+        ];
+
+        // If fewer than 20 records are returned,
+        // there are no more records to load
+        if (data.length < 20) {
+          this.hasMoreOpportunities = false;
+        } else {
+          this.opportunityPage++;
+        }
+
+        this.isLoadingOpportunities = false;
 
       },
 
       error: (error) => {
 
-        console.error('Error loading opportunities:', error);
+        console.error(
+          'FULL OPPORTUNITY LOAD ERROR:',
+          error
+        );
+
+        this.isLoadingOpportunities = false;
 
       }
 
     });
 
-  }
+}
+resetOpportunities(): void {
 
+  this.opportunities = [];
+
+  this.opportunityPage = 1;
+
+  this.hasMoreOpportunities = true;
+
+  this.isLoadingOpportunities = false;
+
+  this.loadOpportunities();
+
+}
   createOpportunity(): void {
 
     this.opportunityService
@@ -590,7 +645,7 @@ deleteCase(id: string): void {
             Amount: null
           };
 
-          this.loadOpportunities();
+          this.resetOpportunities();
 
         },
 
@@ -608,48 +663,61 @@ deleteCase(id: string): void {
 
   editOpportunity(opportunity: any): void {
 
-    this.editingOpportunity = {
-      ...opportunity
-    };
+  console.log('EDIT CLICKED');
+  console.log('Selected Opportunity:', opportunity);
 
-  }
+  this.editingOpportunity = { ...opportunity };
+
+  console.log('Editing Opportunity:', this.editingOpportunity);
+
+}
 
   cancelOpportunityEdit(): void {
 
     this.editingOpportunity = null;
 
   }
+updateOpportunity(): void {
 
-  updateOpportunity(): void {
-
-    this.opportunityService
-      .updateOpportunity(
-        this.editingOpportunity.Id,
-        this.editingOpportunity
-      )
-      .subscribe({
-
-        next: () => {
-
-          alert('Opportunity updated successfully!');
-
-          this.editingOpportunity = null;
-
-          this.loadOpportunities();
-
-        },
-
-        error: (error) => {
-
-          console.error('Error updating opportunity:', error);
-
-          alert('Failed to update opportunity');
-
-        }
-
-      });
-
+  if (!this.editingOpportunity || !this.editingOpportunity.Id) {
+    alert('Opportunity ID is missing');
+    return;
   }
+
+  console.log('Updating opportunity:', this.editingOpportunity);
+
+  this.opportunityService
+    .updateOpportunity(
+      this.editingOpportunity.Id,
+      this.editingOpportunity
+    )
+    .subscribe({
+
+      next: (response) => {
+
+        console.log('Update successful:', response);
+
+        alert('Opportunity updated successfully!');
+
+        this.editingOpportunity = null;
+
+        this.resetOpportunities();
+      },
+
+      error: (error) => {
+
+        console.error(
+          'FULL UPDATE ERROR:',
+          error.error || error
+        );
+
+        alert('Failed to update opportunity');
+
+      }
+
+    });
+
+}
 
   deleteOpportunity(id: string): void {
 
@@ -669,7 +737,7 @@ deleteCase(id: string): void {
 
           alert('Opportunity deleted successfully!');
 
-          this.loadOpportunities();
+          this.resetOpportunities();
 
         },
 

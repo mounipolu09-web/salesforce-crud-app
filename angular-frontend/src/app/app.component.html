@@ -241,7 +241,124 @@
     <button type="submit">Create Opportunity</button>
 
   </form>
-  
+
+  <hr>
+<!-- Edit Opportunity Form -->
+<div *ngIf="editingOpportunity">
+
+  <h2>Edit Opportunity</h2>
+
+  <form (ngSubmit)="updateOpportunity()">
+
+    <label>Opportunity Name:</label>
+    <input
+      type="text"
+      [(ngModel)]="editingOpportunity.Name"
+      name="editOpportunityName"
+      required
+    />
+
+    <br><br>
+
+    <label>Stage:</label>
+    <select
+      [(ngModel)]="editingOpportunity.StageName"
+      name="editStageName"
+      required
+    >
+      <option value="Prospecting">Prospecting</option>
+      <option value="Qualification">Qualification</option>
+      <option value="Needs Analysis">Needs Analysis</option>
+      <option value="Value Proposition">Value Proposition</option>
+      <option value="Id. Decision Makers">Id. Decision Makers</option>
+      <option value="Perception Analysis">Perception Analysis</option>
+      <option value="Proposal/Price Quote">Proposal/Price Quote</option>
+      <option value="Negotiation/Review">Negotiation/Review</option>
+      <option value="Closed Won">Closed Won</option>
+      <option value="Closed Lost">Closed Lost</option>
+    </select>
+
+    <br><br>
+
+    <label>Close Date:</label>
+    <input
+      type="date"
+      [(ngModel)]="editingOpportunity.CloseDate"
+      name="editCloseDate"
+      required
+    />
+
+    <br><br>
+
+    <label>Amount:</label>
+    <input
+      type="number"
+      [(ngModel)]="editingOpportunity.Amount"
+      name="editAmount"
+    />
+
+    <br><br>
+
+    <button type="submit">Update Opportunity</button>
+
+    <button
+      type="button"
+      (click)="cancelOpportunityEdit()"
+    >
+      Cancel
+    </button>
+
+  </form>
+
+</div>
+  <h2>Opportunity List</h2>
+
+  <table border="1" *ngIf="opportunities.length > 0">
+
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Stage</th>
+        <th>Close Date</th>
+        <th>Amount</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      <tr *ngFor="let opportunity of opportunities">
+
+        <td>{{ opportunity.Name }}</td>
+
+        <td>{{ opportunity.StageName }}</td>
+
+        <td>{{ opportunity.CloseDate }}</td>
+
+        <td>{{ opportunity.Amount }}</td>
+
+        <td>
+          <button
+  type="button"
+  (click)="$event.preventDefault(); editOpportunity(opportunity)">
+  Edit
+</button>
+
+          <button (click)="deleteOpportunity(opportunity.Id)">
+            Delete
+          </button>
+        </td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+  <p *ngIf="opportunities.length === 0">
+    No opportunities found.
+  </p>
+
 </div>
 <!-- ========================================== -->
 <!-- LEAD SECTION -->
@@ -466,137 +583,12 @@
 
   </table>
 
-
-  <hr>
-
-  <!-- Edit Opportunity -->
-
-  <div *ngIf="editingOpportunity">
-
-    <h2>Edit Opportunity</h2>
-
-    <form (ngSubmit)="updateOpportunity()">
-
-      <label>Opportunity Name:</label>
-
-      <input
-        type="text"
-        [(ngModel)]="editingOpportunity.Name"
-        name="editOpportunityName"
-        required
-      />
-
-      <br><br>
-
-      <label>Stage:</label>
-
-      <select
-        [(ngModel)]="editingOpportunity.StageName"
-        name="editStageName"
-        required
-      >
-        <option value="Prospecting">Prospecting</option>
-        <option value="Qualification">Qualification</option>
-        <option value="Needs Analysis">Needs Analysis</option>
-        <option value="Value Proposition">Value Proposition</option>
-        <option value="Id. Decision Makers">Id. Decision Makers</option>
-        <option value="Perception Analysis">Perception Analysis</option>
-        <option value="Proposal/Price Quote">Proposal/Price Quote</option>
-        <option value="Negotiation/Review">Negotiation/Review</option>
-        <option value="Closed Won">Closed Won</option>
-        <option value="Closed Lost">Closed Lost</option>
-      </select>
-
-      <br><br>
-
-      <label>Close Date:</label>
-
-      <input
-        type="date"
-        [(ngModel)]="editingOpportunity.CloseDate"
-        name="editCloseDate"
-        required
-      />
-
-      <br><br>
-
-      <label>Amount:</label>
-
-      <input
-        type="number"
-        [(ngModel)]="editingOpportunity.Amount"
-        name="editAmount"
-      />
-
-      <br><br>
-
-      <button type="submit">Update Opportunity</button>
-
-      <button
-        type="button"
-        (click)="cancelOpportunityEdit()"
-      >
-        Cancel
-      </button>
-
-    </form>
-
-    <hr>
-
-  </div>
-
-  <!-- Opportunity List -->
-
-  <h2>Opportunity List</h2>
-
-  <table border="1" cellpadding="10">
-
-    <thead>
-
-      <tr>
-        <th>Name</th>
-        <th>Stage</th>
-        <th>Close Date</th>
-        <th>Amount</th>
-        <th>Actions</th>
-      </tr>
-
-    </thead>
-
-    <tbody>
-
-      <tr *ngFor="let opportunity of opportunities">
-
-        <td>{{ opportunity.Name }}</td>
-
-        <td>{{ opportunity.StageName }}</td>
-
-        <td>{{ opportunity.CloseDate }}</td>
-
-        <td>{{ opportunity.Amount }}</td>
-
-        <td>
-
-          <button
-            (click)="editOpportunity(opportunity)"
-          >
-            Edit
-          </button>
-
-          <button
-            (click)="deleteOpportunity(opportunity.Id)"
-          >
-            Delete
-          </button>
-
-        </td>
-
-      </tr>
-
-    </tbody>
-
-  </table>
 </div>
+  
+
+  
+
+  
 <!-- ========================================== -->
 <!-- CONTACT SECTION -->
 <!-- ========================================== -->

@@ -12,8 +12,9 @@ export class OpportunityService {
 
   constructor(private http: HttpClient) {}
 
-  getOpportunities(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl, {
+  // Get 20 opportunities per page
+  getOpportunities(page: number = 1): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}?page=${page}`, {
       withCredentials: true
     });
   }
