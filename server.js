@@ -181,34 +181,47 @@ app.post("/api/accounts", async (req, res) => {
 // ==========================================
 
 app.get("/api/accounts", async (req, res) => {
-  if (!req.session.accessToken || !req.session.instanceUrl) {
-    return res.status(401).json({
-      message: "Please log in to Salesforce first",
-    });
-  }
-
   try {
+    if (!req.session.accessToken || !req.session.instanceUrl) {
+      return res.status(401).json({
+        message: "Not logged in to Salesforce"
+      });
+    }
+
+    const page = Math.max(
+      parseInt(req.query.page, 10) || 1,
+      1
+    );
+
+    const offset = (page - 1) * 20;
+
     const response = await axios.get(
       `${req.session.instanceUrl}/services/data/v65.0/query`,
       {
-        params: {
-          q: "SELECT Id, Name, Industry, Phone FROM Account LIMIT 20",
-        },
         headers: {
-          Authorization: `Bearer ${req.session.accessToken}`,
+          Authorization: `Bearer ${req.session.accessToken}`
         },
+        params: {
+          q: `SELECT Id, Name, Industry, Phone, Website, CreatedDate
+              FROM Account
+              ORDER BY CreatedDate DESC
+              LIMIT 20
+              OFFSET ${offset}`
+        }
       }
     );
 
     res.json(response.data.records);
+
   } catch (error) {
     console.error(
-      "Salesforce Get Error:",
+      "Account Load Error:",
       error.response?.data || error.message
     );
 
     res.status(500).json({
-      message: "Failed to fetch accounts",
+      message: "Failed to load accounts",
+      error: error.response?.data || error.message
     });
   }
 });
@@ -630,7 +643,52 @@ app.post("/api/contacts", async (req, res) => {
 });
 
 // Get Contacts
-app.get("/api/contacts", async (req, res) => {
+app.get("/api/leads", async (req, res) => {
+  try {
+    if (!req.session.accessToken || !req.session.instanceUrl) {
+      return res.status(401).json({
+        message: "Not logged in to Salesforce"
+      });
+    }
+
+    const page = Math.max(
+      parseInt(req.query.page, 10) || 1,
+      1
+    );
+
+    const offset = (page - 1) * 20;
+
+    const response = await axios.get(
+      `${req.session.instanceUrl}/services/data/v65.0/query`,
+      {
+        headers: {
+          Authorization: `Bearer ${req.session.accessToken}`
+        },
+        params: {
+          q: `SELECT Id, FirstName, LastName, Company, Email, Phone,
+              Status, CreatedDate
+              FROM Lead
+              ORDER BY CreatedDate DESC
+              LIMIT 20
+              OFFSET ${offset}`
+        }
+      }
+    );
+
+    res.json(response.data.records);
+
+  } catch (error) {
+    console.error(
+      "Lead Load Error:",
+      error.response?.data || error.message
+    );
+
+    res.status(500).json({
+      message: "Failed to load leads",
+      error: error.response?.data || error.message
+    });
+  }
+});
   if (!req.session.accessToken || !req.session.instanceUrl) {
     return res.status(401).json({
       message: "Please log in to Salesforce first",
