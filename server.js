@@ -5,7 +5,7 @@ const express = require("express");
 const axios = require("axios");
 const crypto = require("crypto");
 const session = require("express-session");
-
+const API_VERSION = "v65.0";
 const app = express();
 
 const PORT = process.env.PORT || 5000;
