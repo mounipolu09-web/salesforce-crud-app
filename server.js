@@ -341,80 +341,49 @@ app.post("/api/opportunities", async (req, res) => {
   }
 });
 
-// Get Opportunities
+// Get Opportunities with Pagination
 app.get("/api/opportunities", async (req, res) => {
-  if (!req.session.accessToken || !req.session.instanceUrl) {
-    return res.status(401).json({
-      message: "Please log in to Salesforce first",
-    });
-  }
-
   try {
+    if (!req.session.accessToken || !req.session.instanceUrl) {
+      return res.status(401).json({
+        message: "Not logged in to Salesforce"
+      });
+    }
+
+    const page = Math.max(
+      parseInt(req.query.page, 10) || 1,
+      1
+    );
+
+    const offset = (page - 1) * 20;
+
     const response = await axios.get(
-      `${req.session.instanceUrl}/services/data/v65.0/query`,
+      `${req.session.instanceUrl}/services/data/${API_VERSION}/query`,
       {
-        params: {
-         q: "SELECT Id, Name, StageName, CloseDate, Amount, CreatedDate FROM Opportunity ORDER BY CreatedDate DESC LIMIT 100",
-        },
         headers: {
-          Authorization: `Bearer ${req.session.accessToken}`,
+          Authorization: `Bearer ${req.session.accessToken}`
         },
+        params: {
+          q: `SELECT Id, Name, StageName, CloseDate, Amount, CreatedDate
+              FROM Opportunity
+              ORDER BY CreatedDate DESC
+              LIMIT 20
+              OFFSET ${offset}`
+        }
       }
     );
 
     res.json(response.data.records);
+
   } catch (error) {
     console.error(
-      "Opportunity Get Error:",
+      "Opportunity Load Error:",
       error.response?.data || error.message
     );
 
     res.status(500).json({
-      message: "Failed to fetch opportunities",
-    });
-  }
-});
-
-// Update Opportunity
-app.patch("/api/opportunities/:id", async (req, res) => {
-  if (!req.session.accessToken || !req.session.instanceUrl) {
-    return res.status(401).json({
-      message: "Please log in to Salesforce first",
-    });
-  }
-
-  try {
-    const opportunityId = req.params.id;
-
-    await axios.patch(
-      `${req.session.instanceUrl}/services/data/v65.0/sobjects/Opportunity/${opportunityId}`,
-      {
-        Name: req.body.Name,
-        StageName: req.body.StageName,
-        CloseDate: req.body.CloseDate,
-        Amount: req.body.Amount,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${req.session.accessToken}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    res.json({
-      message: "Opportunity updated successfully",
-      id: opportunityId,
-    });
-  } catch (error) {
-    console.error(
-      "Opportunity Update Error:",
-      error.response?.data || error.message
-    );
-
-    res.status(500).json({
-      message: "Failed to update opportunity",
-      error: error.response?.data || error.message,
+      message: "Failed to load opportunities",
+      error: error.response?.data || error.message
     });
   }
 });
