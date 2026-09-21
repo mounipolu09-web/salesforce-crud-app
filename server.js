@@ -495,7 +495,12 @@ app.get("/api/leads", async (req, res) => {
       `${req.session.instanceUrl}/services/data/v65.0/query`,
       {
         params: {
-          q: "SELECT Id, FirstName, LastName, Company, Email, Phone, Status FROM Lead LIMIT 20",
+          q: `SELECT Id, FirstName, LastName, Company, Email, Phone,
+    Status, CreatedDate
+    FROM Lead
+    ORDER BY CreatedDate DESC
+    LIMIT 20
+    OFFSET ${offset}`
         },
         headers: {
           Authorization: `Bearer ${req.session.accessToken}`,
@@ -642,8 +647,8 @@ app.post("/api/contacts", async (req, res) => {
   }
 });
 
-// Get Contacts
-app.get("/api/leads", async (req, res) => {
+//// Get Contacts
+app.get("/api/contacts", async (req, res) => {
   try {
     if (!req.session.accessToken || !req.session.instanceUrl) {
       return res.status(401).json({
@@ -665,9 +670,9 @@ app.get("/api/leads", async (req, res) => {
           Authorization: `Bearer ${req.session.accessToken}`
         },
         params: {
-          q: `SELECT Id, FirstName, LastName, Company, Email, Phone,
-              Status, CreatedDate
-              FROM Lead
+          q: `SELECT Id, FirstName, LastName, Email, Phone,
+              AccountId, CreatedDate
+              FROM Contact
               ORDER BY CreatedDate DESC
               LIMIT 20
               OFFSET ${offset}`
@@ -679,48 +684,13 @@ app.get("/api/leads", async (req, res) => {
 
   } catch (error) {
     console.error(
-      "Lead Load Error:",
-      error.response?.data || error.message
-    );
-
-    res.status(500).json({
-      message: "Failed to load leads",
-      error: error.response?.data || error.message
-    });
-  }
-});
-  if (!req.session.accessToken || !req.session.instanceUrl) {
-    return res.status(401).json({
-      message: "Please log in to Salesforce first",
-    });
-  }
-
-  try {
-    const response = await axios.get(
-      `${req.session.instanceUrl}/services/data/v65.0/query`,
-      {
-        params: {
-         q: `SELECT Id, FirstName, LastName, Email, Phone, CreatedDate
-    FROM Contact
-    ORDER BY CreatedDate DESC
-    LIMIT 20`
-        },
-        headers: {
-          Authorization: `Bearer ${req.session.accessToken}`,
-        },
-      }
-    );
-
-    res.json(response.data.records);
-  } catch (error) {
-    console.error(
       "Contact Get Error:",
       error.response?.data || error.message
     );
 
     res.status(500).json({
       message: "Failed to fetch contacts",
-      error: error.response?.data || error.message,
+      error: error.response?.data || error.message
     });
   }
 });
