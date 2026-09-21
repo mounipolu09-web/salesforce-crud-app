@@ -354,7 +354,7 @@ app.get("/api/opportunities", async (req, res) => {
       `${req.session.instanceUrl}/services/data/v65.0/query`,
       {
         params: {
-          q: "SELECT Id, Name, StageName, CloseDate, Amount FROM Opportunity LIMIT 20",
+         q: "SELECT Id, Name, StageName, CloseDate, Amount, CreatedDate FROM Opportunity ORDER BY CreatedDate DESC LIMIT 100",
         },
         headers: {
           Authorization: `Bearer ${req.session.accessToken}`,
