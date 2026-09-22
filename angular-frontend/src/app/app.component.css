@@ -446,4 +446,9 @@ td {
 .contact-scroll-container td {
   padding: 12px;
   vertical-align: middle;
+}.case-table-container {
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: auto;
+  border: 1px solid #ddd;
 }

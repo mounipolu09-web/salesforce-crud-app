@@ -23,7 +23,9 @@ export class AppComponent implements OnInit {
     'Case'
   ];
 cases: any[] = [];
-
+casePage = 1;
+isLoadingCases = false;
+hasMoreCases = true;
 newCase: any = {
   Subject: '',
   Description: '',
@@ -39,10 +41,11 @@ accountPage: number = 1;
 isLoadingAccounts: boolean = false;
 hasMoreAccounts: boolean = true;
   newAccount = {
-    Name: '',
-    Industry: '',
-    Phone: ''
-  };
+  Name: '',
+  Industry: '',
+  Phone: '',
+  Website: ''
+};
 
   editingAccount: any = null;
 
@@ -383,10 +386,11 @@ onAccountScroll(event: any): void {
         alert('Account created successfully!');
 
         this.newAccount = {
-          Name: '',
-          Industry: '',
-          Phone: ''
-        };
+  Name: '',
+  Industry: '',
+  Phone: '',
+  Website: ''
+};
 
         this.resetAccounts();
 
@@ -579,12 +583,48 @@ updateContact(): void {
 
 }
 loadCases(): void {
-  this.caseService.getCases().subscribe({
-    next: data => this.cases = data,
-    error: err => console.error('Error loading cases:', err)
+  if (this.isLoadingCases || !this.hasMoreCases) {
+    return;
+  }
+
+  this.isLoadingCases = true;
+
+  this.caseService.getCases(this.casePage).subscribe({
+    next: data => {
+      this.cases = [...this.cases, ...data];
+
+      if (data.length < 20) {
+        this.hasMoreCases = false;
+      } else {
+        this.casePage++;
+      }
+
+      this.isLoadingCases = false;
+    },
+    error: err => {
+      console.error('Error loading cases:', err);
+      this.isLoadingCases = false;
+    }
   });
 }
+onCaseScroll(event: any): void {
+  const element = event.target;
 
+  const reachedBottom =
+    element.scrollTop + element.clientHeight >=
+    element.scrollHeight - 10;
+
+  if (reachedBottom) {
+    this.loadCases();
+  }
+}resetCases(): void {
+  this.cases = [];
+  this.casePage = 1;
+  this.hasMoreCases = true;
+  this.isLoadingCases = false;
+
+  this.loadCases();
+}
 createCase(): void {
   this.caseService.createCase(this.newCase).subscribe({
     next: () => {

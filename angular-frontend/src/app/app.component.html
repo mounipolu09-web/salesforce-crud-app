@@ -62,7 +62,13 @@
     />
 
     <br><br>
-
+<label for="website">Website</label>
+<input
+  id="website"
+  type="text"
+  [(ngModel)]="newAccount.Website"
+  placeholder="Enter website"
+/>
     <button type="submit">Create Account</button>
 
   </form>
@@ -749,7 +755,7 @@
 <td>{{ contact.LastName }}</td>
 <td>{{ contact.Email }}</td>
 <td>{{ contact.Phone }}</td>
-<td>{{ contact.AccountId }}</td>
+<td>{{ contact.Account?.Name || '—' }}</td>
 <td>{{ contact.CreatedDate | date:'medium' }}</td>
 
 <td>
@@ -876,12 +882,17 @@
   <hr>
 
   <!-- Case List -->
-  <h3>Case List</h3>
+  <!-- Case List -->
+<h3>Case List</h3>
 
-  <button (click)="loadCases()">
-    Refresh Cases
-  </button>
+<button (click)="resetCases()">
+  Refresh Cases
+</button>
 
+<div
+  class="case-table-container"
+  (scroll)="onCaseScroll($event)"
+>
   <table border="1">
 
     <thead>
@@ -918,7 +929,7 @@
     </tbody>
 
   </table>
-
+</div>
 </div>
 <!-- ========================================== -->
 <!-- OTHER OBJECTS -->

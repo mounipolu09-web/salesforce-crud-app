@@ -161,6 +161,7 @@ app.post("/api/accounts", async (req, res) => {
         Name: req.body.Name,
         Industry: req.body.Industry,
         Phone: req.body.Phone,
+        Website: req.body.Website
       },
       {
         headers: {
@@ -254,6 +255,7 @@ app.patch("/api/accounts/:id", async (req, res) => {
         Name: req.body.Name,
         Industry: req.body.Industry,
         Phone: req.body.Phone,
+        Website: req.body.Website
       },
       {
         headers: {
