@@ -887,12 +887,12 @@ app.get("/api/cases", async (req, res) => {
           Authorization: `Bearer ${req.session.accessToken}`
         },
         params: {
-          q: `SELECT Id, CaseNumber, Subject, Status, Priority,
-              Origin, CreatedDate
-              FROM Case
-              ORDER BY CreatedDate DESC
-              LIMIT 20
-              OFFSET ${offset}`
+          q: `SELECT Id, CaseNumber, Subject, Description, Status, Priority,
+    Origin, CreatedDate
+    FROM Case
+    ORDER BY CreatedDate DESC
+    LIMIT 20
+    OFFSET ${offset}`
         }
       }
     );
