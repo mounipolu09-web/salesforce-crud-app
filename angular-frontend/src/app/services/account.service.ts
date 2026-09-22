@@ -11,11 +11,14 @@ export class AccountService {
  
   constructor(private http: HttpClient) {} 
  
-  getAccounts(): Observable<any> { 
-    return this.http.get(this.apiUrl, { 
-      withCredentials: true 
-    }); 
-  } 
+ getAccounts(page: number = 1): Observable<any[]> {
+  return this.http.get<any[]>(
+    `${this.apiUrl}?page=${page}`,
+    {
+      withCredentials: true
+    }
+  );
+}
  
   createAccount(account: any): Observable<any> { 
     return this.http.post(this.apiUrl, account, { 

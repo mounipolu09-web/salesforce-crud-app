@@ -305,4 +305,145 @@ table {
   position: sticky;
   top: 0;
   background: white;
+}.account-scroll-container {
+  height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  margin-top: 15px;
+}
+
+.account-scroll-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.account-scroll-container thead th {
+  position: sticky;
+  top: 0;
+  background: white;
+}
+.lead-scroll-container {
+  display: block;
+  height: 400px;
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: auto;
+  border: 1px solid #ccc;
+  margin-top: 15px;
+}
+
+.lead-scroll-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.lead-scroll-container thead th {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 1;
+}.lead-scroll-container {
+  display: block;
+  width: 100%;
+  height: 400px;
+  max-height: 400px;
+  overflow-y: scroll !important;
+  overflow-x: auto;
+  border: 1px solid #ccc;
+  margin-top: 15px;
+}
+
+.lead-scroll-container table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+}
+
+.lead-scroll-container thead th {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 1;
+}/* Fix all table layouts */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+th {
+  background-color: #1c4966 !important;
+  color: white !important;
+  font-weight: bold;
+  padding: 15px;
+  height: auto !important;
+  min-height: 0 !important;
+  vertical-align: middle;
+}
+
+td {
+  padding: 15px;
+  height: auto !important;
+  min-height: 0 !important;
+  vertical-align: middle;
+}
+
+/* Account table */
+.account-scroll-container {
+  height: 400px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Lead table */
+.lead-scroll-container {
+  display: block;
+  width: 100%;
+  height: 350px;
+  max-height: 350px;
+  overflow-y: auto !important;
+  overflow-x: auto;
+}
+
+.lead-scroll-container table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+}
+
+.lead-scroll-container thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #1c4966 !important;
+  color: white !important;
+}.contact-scroll-container {
+  display: block;
+  width: 100%;
+  height: 350px;
+  max-height: 350px;
+  overflow-y: auto !important;
+  overflow-x: auto;
+  border: 1px solid #ccc;
+  margin-top: 15px;
+}
+
+.contact-scroll-container table {
+  width: 100%;
+  min-width: 800px;
+  border-collapse: collapse;
+}
+
+.contact-scroll-container thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #1c4966 !important;
+  color: white !important;
+}
+
+.contact-scroll-container th,
+.contact-scroll-container td {
+  padding: 12px;
+  vertical-align: middle;
 }

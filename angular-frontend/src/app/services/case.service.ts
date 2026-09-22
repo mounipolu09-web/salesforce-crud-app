@@ -12,9 +12,10 @@ export class CaseService {
 
   constructor(private http: HttpClient) {}
 
-  getCases(): Observable<any[]> {
+  // Get 20 Cases per page
+  getCases(page: number = 1): Observable<any[]> {
     return this.http.get<any[]>(
-      this.apiUrl,
+      `${this.apiUrl}?page=${page}`,
       { withCredentials: true }
     );
   }

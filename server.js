@@ -811,31 +811,51 @@ app.post("/api/cases", async (req, res) => {
 
 
 // GET CASES
+// Get Cases - Pagination
 app.get("/api/cases", async (req, res) => {
   try {
-    if (!req.session.accessToken) {
-      return res.status(401).json({ error: "Please log in to Salesforce first." });
+    if (!req.session.accessToken || !req.session.instanceUrl) {
+      return res.status(401).json({
+        message: "Not logged in to Salesforce"
+      });
     }
+
+    const page = Math.max(
+      parseInt(req.query.page, 10) || 1,
+      1
+    );
+
+    const offset = (page - 1) * 20;
 
     const response = await axios.get(
       `${req.session.instanceUrl}/services/data/v65.0/query`,
       {
-        params: {
-          q: `SELECT Id, Subject, Description, Status, Priority, Origin, CreatedDate
-              FROM Case
-              ORDER BY CreatedDate DESC
-              LIMIT 20`
-        },
         headers: {
           Authorization: `Bearer ${req.session.accessToken}`
+        },
+        params: {
+          q: `SELECT Id, CaseNumber, Subject, Status, Priority,
+              Origin, CreatedDate
+              FROM Case
+              ORDER BY CreatedDate DESC
+              LIMIT 20
+              OFFSET ${offset}`
         }
       }
     );
 
     res.json(response.data.records);
+
   } catch (error) {
-    console.error("Get Cases Error:", error.response?.data || error.message);
-    res.status(500).json(error.response?.data || { error: error.message });
+    console.error(
+      "Case Get Error:",
+      error.response?.data || error.message
+    );
+
+    res.status(500).json({
+      message: "Failed to fetch cases",
+      error: error.response?.data || error.message
+    });
   }
 });
 

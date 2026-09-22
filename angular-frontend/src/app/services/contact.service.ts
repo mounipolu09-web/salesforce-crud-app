@@ -12,9 +12,10 @@ export class ContactService {
 
   constructor(private http: HttpClient) {}
 
-  getContacts(): Observable<any[]> {
+  // Get 20 Contacts per page
+  getContacts(page: number = 1): Observable<any[]> {
     return this.http.get<any[]>(
-      this.apiUrl,
+      `${this.apiUrl}?page=${page}`,
       { withCredentials: true }
     );
   }

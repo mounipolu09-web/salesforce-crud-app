@@ -12,14 +12,12 @@ export class LeadService {
 
   constructor(private http: HttpClient) {}
 
-  getLeads(page: number = 1): Observable<any[]> {
-  return this.http.get<any[]>(
-    `${this.apiUrl}?page=${page}`,
-    {
-      withCredentials: true
-    }
-  );
-}
+  getLeads(): Observable<any[]> {
+    return this.http.get<any[]>(
+      this.apiUrl,
+      { withCredentials: true }
+    );
+  }
 
   createLead(lead: any): Observable<any> {
     return this.http.post(

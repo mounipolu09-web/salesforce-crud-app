@@ -35,7 +35,9 @@ newCase: any = {
 editingCase: any = null;
   // Account Properties
   accounts: any[] = [];
-
+accountPage: number = 1;
+isLoadingAccounts: boolean = false;
+hasMoreAccounts: boolean = true;
   newAccount = {
     Name: '',
     Industry: '',
@@ -62,7 +64,9 @@ hasMoreOpportunities: boolean = true;
 
 // Lead Properties
 leads: any[] = [];
-
+leadPage: number = 1;
+isLoadingLeads: boolean = false;
+hasMoreLeads: boolean = true;
 newLead = {
   FirstName: '',
   LastName: '',
@@ -80,6 +84,9 @@ newContact: any = {
   Phone: ''
 };
 
+contactPage = 1;
+isLoadingContacts = false;
+hasMoreContacts = true;
 editingContact: any = null;
 editingLead: any = null;
   
@@ -98,78 +105,79 @@ editingLead: any = null;
   }
 
   onObjectChange(): void {
-
   console.log('Selected object:', this.selectedObject);
 
   if (this.selectedObject === 'Account') {
-
-    this.loadAccounts();
+    this.resetAccounts();
 
   } else if (this.selectedObject === 'Opportunity') {
-
-    this.loadOpportunities();
+    this.resetOpportunities();
 
   } else if (this.selectedObject === 'Lead') {
-
-    this.loadLeads();
+    this.resetLeads();
 
   } else if (this.selectedObject === 'Contact') {
-
     this.loadContacts();
-    
 
-  }
-  else if (this.selectedObject === 'Case') {
-  this.loadCases();
-} else {
+  } else if (this.selectedObject === 'Case') {
+    this.loadCases();
 
+  } else {
     this.accounts = [];
     this.opportunities = [];
     this.leads = [];
     this.contacts = [];
     this.cases = [];
-
   }
-
 }
 // ==========================================
 // LEAD CRUD
 // ==========================================
 
 loadLeads(): void {
+  if (this.isLoadingLeads || !this.hasMoreLeads) {
+    return;
+  }
 
-  this.leadService.getLeads().subscribe({
+  this.isLoadingLeads = true;
 
+  this.leadService.getLeads(this.leadPage).subscribe({
     next: (data) => {
-      this.leads = data;
+      this.leads = [...this.leads, ...data];
+
+      if (data.length < 20) {
+        this.hasMoreLeads = false;
+      } else {
+        this.leadPage++;
+      }
+
+      this.isLoadingLeads = false;
     },
 
     error: (error) => {
-      console.error('Error loading leads:', error);
+      console.error("Lead loading error:", error);
+      this.isLoadingLeads = false;
     }
-
   });
+}resetLeads(): void {
+  this.leads = [];
+  this.leadPage = 1;
+  this.hasMoreLeads = true;
+  this.isLoadingLeads = false;
 
+  this.loadLeads();
+}onLeadScroll(event: any): void {
+  const element = event.target;
+
+  const reachedBottom =
+    element.scrollTop + element.clientHeight >=
+    element.scrollHeight - 10;
+
+  if (reachedBottom) {
+    this.loadLeads();
+  }
 }
-loadContacts(): void {
 
-  this.contactService.getContacts().subscribe({
-
-    next: (data) => {
-
-      this.contacts = data;
-
-    },
-
-    error: (error) => {
-
-      console.error('Error loading contacts:', error);
-
-    }
-
-  });
-
-}
 createLead(): void {
 
   this.leadService.createLead(this.newLead).subscribe({
@@ -187,7 +195,7 @@ createLead(): void {
         Status: 'Open - Not Contacted'
       };
 
-      this.loadLeads();
+      this.resetLeads();
 
     },
 
@@ -234,7 +242,7 @@ updateLead(): void {
 
       this.editingLead = null;
 
-      this.loadLeads();
+      this.resetLeads();
 
     },
 
@@ -266,7 +274,7 @@ deleteLead(id: string): void {
 
       alert('Lead deleted successfully!');
 
-      this.loadLeads();
+      this.resetLeads();
 
     },
 
@@ -286,18 +294,49 @@ deleteLead(id: string): void {
   // ==========================================
 
   loadAccounts(): void {
-
-    this.accountService.getAccounts().subscribe({
-      next: (data) => {
-        this.accounts = data;
-      },
-      error: (error) => {
-        console.error('Error loading accounts:', error);
-      }
-    });
-
+  if (this.isLoadingAccounts || !this.hasMoreAccounts) {
+    return;
   }
 
+  this.isLoadingAccounts = true;
+
+  this.accountService.getAccounts(this.accountPage).subscribe({
+    next: (data) => {
+      this.accounts = [...this.accounts, ...data];
+
+      if (data.length < 20) {
+        this.hasMoreAccounts = false;
+      } else {
+        this.accountPage++;
+      }
+
+      this.isLoadingAccounts = false;
+    },
+
+    error: (error) => {
+      console.error("Account loading error:", error);
+      this.isLoadingAccounts = false;
+    }
+  });
+}resetAccounts(): void {
+  this.accounts = [];
+  this.accountPage = 1;
+  this.hasMoreAccounts = true;
+  this.isLoadingAccounts = false;
+
+  this.loadAccounts();
+}
+onAccountScroll(event: any): void {
+  const element = event.target;
+
+  const reachedBottom =
+    element.scrollTop + element.clientHeight >=
+    element.scrollHeight - 10;
+
+  if (reachedBottom) {
+    this.loadAccounts();
+  }
+}
   editAccount(account: any): void {
     this.editingAccount = { ...account };
   }
@@ -319,7 +358,7 @@ deleteLead(id: string): void {
 
         this.editingAccount = null;
 
-        this.loadAccounts();
+        this.resetAccounts();
 
       },
 
@@ -349,7 +388,7 @@ deleteLead(id: string): void {
           Phone: ''
         };
 
-        this.loadAccounts();
+        this.resetAccounts();
 
       },
 
@@ -381,7 +420,7 @@ deleteLead(id: string): void {
 
         alert('Account deleted successfully!');
 
-        this.loadAccounts();
+        this.resetAccounts();
 
       },
 
@@ -395,7 +434,51 @@ deleteLead(id: string): void {
 
     });
 
+  }loadContacts(): void {
+  if (this.isLoadingContacts || !this.hasMoreContacts) {
+    return;
   }
+
+  this.isLoadingContacts = true;
+
+  this.contactService.getContacts(this.contactPage).subscribe({
+    next: (data) => {
+      this.contacts = [...this.contacts, ...data];
+
+      if (data.length < 20) {
+        this.hasMoreContacts = false;
+      } else {
+        this.contactPage++;
+      }
+
+      this.isLoadingContacts = false;
+    },
+
+    error: (error) => {
+      console.error("Contact loading error:", error);
+      this.isLoadingContacts = false;
+    }
+  });
+}resetContacts(): void {
+  this.contacts = [];
+  this.contactPage = 1;
+  this.hasMoreContacts = true;
+  this.isLoadingContacts = false;
+
+  this.loadContacts();
+}
+
+onContactScroll(event: any): void {
+  const element = event.target;
+
+  const reachedBottom =
+    element.scrollTop + element.clientHeight >=
+    element.scrollHeight - 10;
+
+  if (reachedBottom) {
+    this.loadContacts();
+  }
+}
 createContact(): void {
 
   this.contactService.createContact(this.newContact).subscribe({
@@ -411,7 +494,7 @@ createContact(): void {
         Phone: ''
       };
 
-      this.loadContacts();
+      this.resetContacts();
 
     },
 
@@ -450,7 +533,7 @@ updateContact(): void {
 
       this.editingContact = null;
 
-      this.loadContacts();
+      this.resetContacts();
 
     },
 
@@ -480,7 +563,7 @@ updateContact(): void {
 
       alert('Contact deleted successfully!');
 
-      this.loadContacts();
+      this.resetContacts();
 
     },
 
@@ -613,6 +696,20 @@ deleteCase(id: string): void {
       }
 
     });
+
+}onOpportunityScroll(event: any): void {
+
+  const element = event.target;
+
+  const reachedBottom =
+    element.scrollTop + element.clientHeight >=
+    element.scrollHeight - 10;
+
+  if (reachedBottom) {
+
+    this.loadOpportunities();
+
+  }
 
 }
 resetOpportunities(): void {

@@ -125,33 +125,39 @@
 
   <!-- Account List -->
 
-  <h2>Account List</h2>
+<h2>Account List</h2>
 
+<div
+  class="account-scroll-container"
+  (scroll)="onAccountScroll($event)"
+>
   <table border="1" cellpadding="10">
 
     <thead>
+  <tr>
+    <th>Name</th>
+    <th>Industry</th>
+    <th>Phone</th>
+    <th>Website</th>
+    <th>Created Date</th>
+    <th>Actions</th>
+  </tr>
+</thead>
 
-      <tr>
-        <th>Name</th>
-        <th>Industry</th>
-        <th>Phone</th>
-        <th>Actions</th>
-      </tr>
+<tbody>
+  <tr *ngFor="let account of accounts">
 
-    </thead>
+    <td>{{ account.Name }}</td>
 
-    <tbody>
+    <td>{{ account.Industry }}</td>
 
-      <tr *ngFor="let account of accounts">
+    <td>{{ account.Phone }}</td>
 
-        <td>{{ account.Name }}</td>
+    <td>{{ account.Website }}</td>
 
-        <td>{{ account.Industry }}</td>
+    <td>{{ account.CreatedDate | date:'medium' }}</td>
 
-        <td>{{ account.Phone }}</td>
-
-        <td>
-
+    <td>
           <button
             (click)="editAccount(account)"
           >
@@ -163,17 +169,26 @@
           >
             Delete
           </button>
-
         </td>
 
       </tr>
-
     </tbody>
 
   </table>
-
 </div>
 
+<p *ngIf="isLoadingAccounts">
+  Loading more accounts...
+</p>
+
+<p *ngIf="!hasMoreAccounts && accounts.length > 0">
+  No more accounts.
+</p>
+
+<p *ngIf="accounts.length === 0 && !isLoadingAccounts">
+  No accounts found.
+</p>
+</div>
 <!-- ========================================== -->
 <!-- OPPORTUNITY SECTION -->
 <!-- ========================================== -->
@@ -310,20 +325,26 @@
 
   </form>
 
-</div>
-  <h2>Opportunity List</h2>
+</div><h2>Opportunity List</h2>
+
+<!-- Scrollable Opportunity List -->
+<div
+  class="opportunity-scroll-container"
+  (scroll)="onOpportunityScroll($event)"
+>
 
   <table border="1" *ngIf="opportunities.length > 0">
 
     <thead>
-      <tr>
-        <th>Name</th>
-        <th>Stage</th>
-        <th>Close Date</th>
-        <th>Amount</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
+  <tr>
+    <th>Name</th>
+    <th>Stage</th>
+    <th>Close Date</th>
+    <th>Amount</th>
+    <th>Created Date</th>
+    <th>Actions</th>
+  </tr>
+</thead>
 
     <tbody>
 
@@ -331,22 +352,29 @@
 
         <td>{{ opportunity.Name }}</td>
 
-        <td>{{ opportunity.StageName }}</td>
+<td>{{ opportunity.StageName }}</td>
 
-        <td>{{ opportunity.CloseDate }}</td>
+<td>{{ opportunity.CloseDate }}</td>
 
-        <td>{{ opportunity.Amount }}</td>
+<td>{{ opportunity.Amount }}</td>
 
-        <td>
+<td>{{ opportunity.CreatedDate | date:'medium' }}</td>
+
+<td>
+
           <button
-  type="button"
-  (click)="$event.preventDefault(); editOpportunity(opportunity)">
-  Edit
-</button>
+            type="button"
+            (click)="$event.preventDefault(); editOpportunity(opportunity)"
+          >
+            Edit
+          </button>
 
-          <button (click)="deleteOpportunity(opportunity.Id)">
+          <button
+            (click)="deleteOpportunity(opportunity.Id)"
+          >
             Delete
           </button>
+
         </td>
 
       </tr>
@@ -355,9 +383,21 @@
 
   </table>
 
-  <p *ngIf="opportunities.length === 0">
-    No opportunities found.
-  </p>
+</div>
+
+<p *ngIf="isLoadingOpportunities">
+  Loading more opportunities...
+</p>
+
+<p *ngIf="!hasMoreOpportunities && opportunities.length > 0">
+  No more opportunities.
+</p>
+
+<p *ngIf="opportunities.length === 0 && !isLoadingOpportunities">
+  No opportunities found.
+</p>
+
+  
 
 </div>
 <!-- ========================================== -->
@@ -542,6 +582,11 @@
 
   <h2>Lead List</h2>
 
+<div
+  class="lead-scroll-container"
+  (scroll)="onLeadScroll($event)"
+  style="height: 300px; max-height: 300px; overflow-y: scroll; overflow-x: auto;"
+>
   <table border="1" cellpadding="10">
 
     <thead>
@@ -557,9 +602,7 @@
     </thead>
 
     <tbody>
-
       <tr *ngFor="let lead of leads">
-
         <td>{{ lead.FirstName }}</td>
         <td>{{ lead.LastName }}</td>
         <td>{{ lead.Company }}</td>
@@ -576,16 +619,24 @@
             Delete
           </button>
         </td>
-
       </tr>
-
     </tbody>
 
   </table>
-
 </div>
-  
 
+<p *ngIf="isLoadingLeads">
+  Loading more leads...
+</p>
+
+<p *ngIf="!hasMoreLeads && leads.length > 0">
+  No more leads.
+</p>
+
+<p *ngIf="leads.length === 0 && !isLoadingLeads">
+  No leads found.
+</p>
+</div>
   
 
   
@@ -668,30 +719,40 @@
   </div>
 
   <!-- Contact List -->
-  <h3>Contact List</h3>
+  <!-- Contact List -->
 
+<h3>Contact List</h3>
+
+<div
+  class="contact-scroll-container"
+  (scroll)="onContactScroll($event)"
+>
   <table border="1">
 
     <thead>
-      <tr>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Email</th>
-        <th>Phone</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
+  <tr>
+    <th>First Name</th>
+    <th>Last Name</th>
+    <th>Email</th>
+    <th>Phone</th>
+    <th>Account ID</th>
+    <th>Created Date</th>
+    <th>Actions</th>
+  </tr>
+</thead>
 
     <tbody>
 
       <tr *ngFor="let contact of contacts">
 
         <td>{{ contact.FirstName }}</td>
-        <td>{{ contact.LastName }}</td>
-        <td>{{ contact.Email }}</td>
-        <td>{{ contact.Phone }}</td>
+<td>{{ contact.LastName }}</td>
+<td>{{ contact.Email }}</td>
+<td>{{ contact.Phone }}</td>
+<td>{{ contact.AccountId }}</td>
+<td>{{ contact.CreatedDate | date:'medium' }}</td>
 
-        <td>
+<td>
           <button (click)="editContact(contact)">
             Edit
           </button>
@@ -706,6 +767,19 @@
     </tbody>
 
   </table>
+</div>
+
+<p *ngIf="isLoadingContacts">
+  Loading more contacts...
+</p>
+
+<p *ngIf="!hasMoreContacts && contacts.length > 0">
+  No more contacts.
+</p>
+
+<p *ngIf="contacts.length === 0 && !isLoadingContacts">
+  No contacts found.
+</p>
 
 </div>
 <!-- CASE SECTION -->
