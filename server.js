@@ -400,7 +400,50 @@ app.get("/api/opportunities", async (req, res) => {
     });
   }
 });
+// Update Opportunity
+app.patch("/api/opportunities/:id", async (req, res) => {
+  if (!req.session.accessToken || !req.session.instanceUrl) {
+    return res.status(401).json({
+      message: "Please log in to Salesforce first",
+    });
+  }
 
+  try {
+    const opportunityId = req.params.id;
+
+    await axios.patch(
+      `${req.session.instanceUrl}/services/data/v65.0/sobjects/Opportunity/${opportunityId}`,
+      {
+        Name: req.body.Name,
+        StageName: req.body.StageName,
+        CloseDate: req.body.CloseDate,
+        Amount: req.body.Amount,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${req.session.accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    res.json({
+      message: "Opportunity updated successfully",
+      id: opportunityId,
+    });
+
+  } catch (error) {
+    console.error(
+      "Opportunity Update Error:",
+      error.response?.data || error.message
+    );
+
+    res.status(500).json({
+      message: "Failed to update opportunity",
+      error: error.response?.data || error.message,
+    });
+  }
+});
 // Delete Opportunity
 app.delete("/api/opportunities/:id", async (req, res) => {
   if (!req.session.accessToken || !req.session.instanceUrl) {
