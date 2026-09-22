@@ -11,15 +11,23 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // CORS Configuration
-app.use(
-  cors({
-    origin: [
-      "http://localhost:4200",
-      "https://salesforce-crud-app-sepia.vercel.app",
-    ],
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      process.env.FRONTEND_URL,
+      "http://localhost:4200"
+    ];
+
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else if (origin.startsWith("http://localhost:")) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
+}));
 
 app.use(express.json());
 
@@ -724,11 +732,11 @@ app.get("/api/contacts", async (req, res) => {
         },
         params: {
           q: `SELECT Id, FirstName, LastName, Email, Phone,
-              AccountId, CreatedDate
-              FROM Contact
-              ORDER BY CreatedDate DESC
-              LIMIT 20
-              OFFSET ${offset}`
+    AccountId, Account.Name, CreatedDate
+    FROM Contact
+    ORDER BY CreatedDate DESC
+    LIMIT 20
+    OFFSET ${offset}`
         }
       }
     );
